@@ -6,7 +6,7 @@ use App\Repository\FieldRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FieldRepository::class)]
-#[ORM\InheritanceType("JOINED")]
+#[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn(name: "fieldtype", type: "string")]
 #[ORM\DiscriminatorMap([
     "input" => Input::class, 

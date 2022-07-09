@@ -30,8 +30,7 @@ class SelectController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $selectRepository->add($select, true);
-
-            return $this->redirectToRoute('app_select_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_form_show', ['id' => $select->getForm()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('select/new.html.twig', [

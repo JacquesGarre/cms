@@ -30,8 +30,7 @@ class TextareaController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $textareaRepository->add($textarea, true);
-
-            return $this->redirectToRoute('app_textarea_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_form_show', ['id' => $textarea->getForm()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('textarea/new.html.twig', [

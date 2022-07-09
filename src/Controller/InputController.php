@@ -31,7 +31,7 @@ class InputController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $inputRepository->add($input, true);
 
-            return $this->redirectToRoute('app_input_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_form_show', ['id' => $input->getForm()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('input/new.html.twig', [

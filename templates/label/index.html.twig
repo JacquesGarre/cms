@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Label index{% endblock %}
+
+{% block body %}
+    <h1>Label index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Text</th>
+                <th>Class</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for label in labels %}
+            <tr>
+                <td>{{ label.id }}</td>
+                <td>{{ label.text }}</td>
+                <td>{{ label.class }}</td>
+                <td>
+                    <a href="{{ path('app_label_show', {'id': label.id}) }}">show</a>
+                    <a href="{{ path('app_label_edit', {'id': label.id}) }}">edit</a>
+                    {{ include('label/_delete_form.html.twig', {'button_label': 'Delete'}) }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_label_new') }}">Create new</a>
+{% endblock %}

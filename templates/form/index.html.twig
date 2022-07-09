@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Form index{% endblock %}
+
+{% block body %}
+    <h1>Form index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Fields</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for form in forms %}
+            <tr>
+                <td>{{ form.id }}</td>
+                <td>{{ form.name }}</td>
+                <td>{{ form.getFields() | json_encode }}</td>
+                <td>
+                    <a href="{{ path('app_form_show', {'id': form.id}) }}">show</a>
+                    <a href="{{ path('app_form_edit', {'id': form.id}) }}">edit</a>
+                    {{ include('form/_delete_form.html.twig', {'button_label': 'Delete'}) }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_form_new') }}">Create new</a>
+{% endblock %}

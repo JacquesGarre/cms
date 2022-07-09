@@ -1,0 +1,13 @@
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.label) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.placeholder) }}
+    {{ form_row(form.disabled) }}
+    {{ form_row(form.readonly) }}
+    {{ form_row(form.required) }}
+    {{ form_row(form.cols) }}
+    {{ form_row(form.rowscount) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
+

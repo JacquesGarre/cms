@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Form{% endblock %}
+
+{% block body %}
+    <h1>Create new Form</h1>
+
+    {{ include('form/_form.html.twig') }}
+
+    <a href="{{ path('app_form_index') }}">back to list</a>
+{% endblock %}

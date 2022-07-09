@@ -1,13 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Form{% endblock %}
+{% block title %}Edit model{% endblock %}
 
 {% block body %}
-    <h1>Edit Form</h1>
+    <h1>Edit model</h1>
 
     {{ include('form/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('app_form_index') }}">back to list</a>
 
-    {{ include('form/_delete_form.html.twig') }}
 {% endblock %}

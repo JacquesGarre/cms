@@ -1,16 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Form index{% endblock %}
+{% block title %}Models{% endblock %}
 
 {% block body %}
-    <h1>Form index</h1>
+    <h1>Models</h1>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Fields</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -19,7 +18,6 @@
             <tr>
                 <td>{{ form.id }}</td>
                 <td>{{ form.name }}</td>
-                <td>{{ form.getFields() | json_encode }}</td>
                 <td>
                     <a href="{{ path('app_form_show', {'id': form.id}) }}">show</a>
                     <a href="{{ path('app_form_edit', {'id': form.id}) }}">edit</a>

@@ -13,7 +13,7 @@ class TextareaType extends AbstractType
     {
         $builder
             ->add('form')
-            ->add('label')
+            ->add('label', LabelType::class)
             ->add('name')
             ->add('placeholder')
             ->add('disabled')

@@ -15,7 +15,7 @@ class InputType extends AbstractType
     {
         $builder
             ->add('form')
-            ->add('label')
+            ->add('label', LabelType::class)
             ->add('name')
             ->add('type', ChoiceType::class, [
                 'choices' => [

@@ -13,7 +13,7 @@ class SelectType extends AbstractType
     {
         $builder
             ->add('form')
-            ->add('label')
+            ->add('label', LabelType::class)
             ->add('name')
             ->add('disabled')
             ->add('multiple')

@@ -1,29 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Form{% endblock %}
+{% block title %}Model {{ form.name }}{% endblock %}
 
 {% block body %}
+
     <a href="{{ path('app_form_index') }}">back to list</a>
     <a href="{{ path('app_form_edit', {'id': form.id}) }}">edit</a>
+    {{ include('form/_delete_form.html.twig') }}
+
     <h1>Model {{ form.name }}</h1>
     <h3>Attributes</h3>
-    <a href="{{ path('app_input_new') }}">Create new input</a><br>
-    <a href="{{ path('app_textarea_new') }}">Create new textarea</a><br>
-    <a href="{{ path('app_select_new') }}">Create new select</a><br><br><br>
     <table class="table">
         <tbody>
             {% for field in form.fields %}
                 <tr>
-                    <td>{{field.label}}</td>
-                    <td>{{field.name}}</td>
+                    <td>{{field.label}} ({{field.name}})</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    <a href="{{ path('app_input_new') }}">Create new input</a><br>
+    <a href="{{ path('app_textarea_new') }}">Create new textarea</a><br>
+    <a href="{{ path('app_select_new') }}">Create new select</a><br>
+
 
     
 
     
 
-    {{ include('form/_delete_form.html.twig') }}
 {% endblock %}

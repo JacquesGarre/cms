@@ -6,6 +6,6 @@
     <li><a href="{{ path('app_form_index') }}">Models</a></li>
     <hr>
     {% for item in items %}
-        <li><a href="{{ path('app_entity_' ~ item.route, {'id':item.model.id}) }}">{{item.name}}</a></li>
+        <li><a href="{{ path('app_entity_' ~ item.route, {'id':item.model.id, 'view_id': item.view.id}) }}">{{item.name}}</a></li>
     {% endfor %}
 </ul>

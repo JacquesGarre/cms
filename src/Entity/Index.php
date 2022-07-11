@@ -79,12 +79,7 @@ class Index
         return $this;
     }
 
-    public function removeIndexColumn(IndexColumn $indexColumn): self
-    {
-        if ($this->indexColumns->removeElement($indexColumn)) {
-            $indexColumn->removeView($this);
-        }
-
-        return $this;
+    public function __toString() {
+        return $this->name;
     }
 }

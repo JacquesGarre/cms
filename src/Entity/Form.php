@@ -24,11 +24,15 @@ class Form
     #[ORM\OneToMany(mappedBy: 'model', targetEntity: Index::class, orphanRemoval: true)]
     private $indices;
 
+    #[ORM\OneToMany(mappedBy: 'model', targetEntity: Entity::class, orphanRemoval: true)]
+    private $entities;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
         $this->attributes = new ArrayCollection();
         $this->indices = new ArrayCollection();
+        $this->entities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,6 +110,36 @@ class Form
             // set the owning side to null (unless already changed)
             if ($index->getModel() === $this) {
                 $index->setModel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Entity>
+     */
+    public function getEntities(): Collection
+    {
+        return $this->entities;
+    }
+
+    public function addEntity(Entity $entity): self
+    {
+        if (!$this->entities->contains($entity)) {
+            $this->entities[] = $entity;
+            $entity->setModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEntity(Entity $entity): self
+    {
+        if ($this->entities->removeElement($entity)) {
+            // set the owning side to null (unless already changed)
+            if ($entity->getModel() === $this) {
+                $entity->setModel(null);
             }
         }
 

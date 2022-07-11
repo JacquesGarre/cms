@@ -1,28 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ model.name }}{% endblock %}
+{% block title %}{{ view.name }}{% endblock %}
 
 {% block body %}
-    <h1>{{ model.name }}</h1>
+    <h1>{{ view.name }}</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>CreationDate</th>
-                <th>UpdateDate</th>
+            {% for col in view.indexColumns %}
+                <th>{{col.field.label}}</th>
+            {% endfor %}
                 <th>actions</th>
-            </tr>
+            </tr>            
         </thead>
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td>{{ entity.id }}</td>
-                <td>{{ entity.creationDate ? entity.creationDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ entity.updateDate ? entity.updateDate|date('Y-m-d H:i:s') : '' }}</td>
+                {% for col in view.indexColumns %}
+                    <td>
+                        {{ entity.getEntityMeta(col.field.name) is not empty ? entity.getEntityMeta(col.field.name).getValue() : '' }}
+                    </td>
+                {% endfor %}
                 <td>
-                    <a href="{{ path('app_entity_show', {'id': entity.id}) }}">show</a>
-                    <a href="{{ path('app_entity_edit', {'id': entity.id}) }}">edit</a>
+                    <a href="{{ path('app_entity_edit', {'id': entity.id, 'form_id':model.id, 'view_id':view.id}) }}">edit</a>
+                    {{ include('entity/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}
@@ -33,5 +35,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_entity_new', {'id':model.id}) }}">Create new</a>
+    <a href="{{ path('app_entity_new', {'id':model.id, 'view_id': view.id}) }}">Create new</a>
 {% endblock %}

@@ -28,6 +28,9 @@ class MenuItem
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $route;
 
+    #[ORM\ManyToOne(targetEntity: Index::class)]
+    private $view;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +92,18 @@ class MenuItem
     public function setRoute(?string $route): self
     {
         $this->route = $route;
+
+        return $this;
+    }
+
+    public function getView(): ?Index
+    {
+        return $this->view;
+    }
+
+    public function setView(?Index $view): self
+    {
+        $this->view = $view;
 
         return $this;
     }

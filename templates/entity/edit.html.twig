@@ -7,7 +7,7 @@
 
     {{ include('entity/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_entity_index') }}">back to list</a>
+    <a href="{{ path('app_entity_index', {'id': model.id, 'view_id':view.id}) }}">back to list</a>
 
     {{ include('entity/_delete_form.html.twig') }}
 {% endblock %}

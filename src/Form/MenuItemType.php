@@ -15,7 +15,6 @@ class MenuItemType extends AbstractType
     {   
         $builder
             ->add('name')
-            ->add('link')
             ->add('position')
             ->add('model')
             ->add('route', ChoiceType::class, [
@@ -25,6 +24,7 @@ class MenuItemType extends AbstractType
                     "new" => "new"
                 ]
             ])
+            ->add('view')
         ;
     }
 

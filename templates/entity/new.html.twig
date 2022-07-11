@@ -7,5 +7,5 @@
 
     {{ include('entity/_form.html.twig') }}
 
-    <a href="{{ path('app_entity_index') }}">back to list</a>
+    <a href="{{ path('app_entity_index', {'id':model.id, 'view_id': view.id}) }}">back to list</a>
 {% endblock %}

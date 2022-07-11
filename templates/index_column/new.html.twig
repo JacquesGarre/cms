@@ -7,5 +7,5 @@
 
     {{ include('index_column/_form.html.twig') }}
 
-    <a href="{{ path('app_index_column_index', {'model_id': model.id,'index_id': index.id}) }}">back to list</a>
+    <a href="{{ path('app_index_edit', {'form_id': model.id,'id': index.id}) }}">back to list</a>
 {% endblock %}

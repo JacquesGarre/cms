@@ -24,6 +24,10 @@ class Entity
     #[ORM\OneToMany(mappedBy: 'entity', targetEntity: EntityMeta::class, orphanRemoval: true)]
     private $entityMetas;
 
+    #[ORM\ManyToOne(targetEntity: Form::class, inversedBy: 'entities')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $model;
+
     public function __construct()
     {
         $this->entityMetas = new ArrayCollection();
@@ -66,6 +70,13 @@ class Entity
         return $this->entityMetas;
     }
 
+    public function getEntityMeta(string $name): mixed
+    {
+        return $this->getEntityMetas()->filter(function(EntityMeta $entityMeta) use ($name) {
+            return $entityMeta->getName() == $name;
+        })->first();
+    }
+
     public function addEntityMeta(EntityMeta $entityMeta): self
     {
         if (!$this->entityMetas->contains($entityMeta)) {
@@ -84,6 +95,18 @@ class Entity
                 $entityMeta->setEntity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getModel(): ?Form
+    {
+        return $this->model;
+    }
+
+    public function setModel(?Form $model): self
+    {
+        $this->model = $model;
 
         return $this;
     }

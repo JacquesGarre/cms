@@ -34,11 +34,11 @@ class IndexColumnController extends AbstractController
         $index = $indexRepository->find($index_id);
 
         $indexColumn = new IndexColumn();
+        $indexColumn->setView($index);
         $form = $this->createForm(IndexColumnType::class, $indexColumn);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $indexColumn->setView($index);
             $indexColumnRepository->add($indexColumn, true);
 
             return $this->redirectToRoute('app_index_edit', [

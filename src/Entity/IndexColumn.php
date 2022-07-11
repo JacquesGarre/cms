@@ -15,7 +15,7 @@ class IndexColumn
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Index::class)]
+    #[ORM\ManyToOne(targetEntity: Index::class, inversedBy: 'indexColumns')]
     private $view;
 
     #[ORM\ManyToOne(targetEntity: Attribute::class)]

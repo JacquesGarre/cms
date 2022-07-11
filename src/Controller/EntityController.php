@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Entity;
 use App\Entity\EntityMeta;
-use App\Form\EntityType;
+use App\Form\EntityFormType;
 use App\Repository\EntityRepository;
 use App\Repository\EntityMetaRepository;
 use App\Repository\FormRepository;
@@ -42,7 +42,7 @@ class EntityController extends AbstractController
         $entity = new Entity();
         $entity->setModel($model);
 
-        $form = $this->createForm(EntityType::class, $entity);
+        $form = $this->createForm(EntityFormType::class, $entity);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -54,7 +54,7 @@ class EntityController extends AbstractController
             $fields = $model->getAttributes();
             foreach($fields as $field){
                 $fieldID = $field->getName();
-                $fieldValue = $form->get($fieldID)->getData();
+                $fieldValue = $form->get($fieldID)->getViewData();
                 $meta = new EntityMeta();
                 $meta->setEntity($entity);
                 $meta->setName($fieldID);
@@ -91,7 +91,7 @@ class EntityController extends AbstractController
         $fields = $model->getAttributes();
         $view = $indexRepository->find($view_id);
 
-        $form = $this->createForm(EntityType::class, $entity);
+        $form = $this->createForm(EntityFormType::class, $entity);
         foreach($entity->getEntityMetas() as $meta){
             $form->get($meta->getName())->setData($meta->getValue());
         }

@@ -10,9 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType as EntityFieldType;
 use App\Entity\Option;
 
-class EntityType extends AbstractType
+class EntityFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {   
@@ -39,11 +40,13 @@ class EntityType extends AbstractType
                     $options['attr']['rows'] = $field->getHeight();
                 break;
                 case 'select':
-                    $class = ChoiceType::class;
-                    $options['choices'] = ['' => ''];
-                    foreach($field->getOptions() as $option){
-                        $options['choices'][$option->getText()] = $option->getValue();   
-                    }
+                    $class = EntityFieldType::class;
+                    $options['class'] = Option::class;
+                    $options['choice_label'] = 'text';
+                    $options['choice_value'] = function (?Option $entity) {
+                        return $entity ? $entity->getId() : '';
+                    };
+                    $options['choices'] = $field->getOptions();
                 break;
             }
             $builder->add($field->getName(), $class, $options);

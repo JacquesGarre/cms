@@ -25,9 +25,6 @@ class Option
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $selected;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $value;
-
     public function __construct()
     {
         $this->selects = new ArrayCollection();
@@ -70,18 +67,6 @@ class Option
     public function setSelected(?bool $selected): self
     {
         $this->selected = $selected;
-
-        return $this;
-    }
-
-    public function getValue(): ?string
-    {
-        return $this->value;
-    }
-
-    public function setValue(string $value): self
-    {
-        $this->value = $value;
 
         return $this;
     }

@@ -63,10 +63,8 @@ class OptionController extends AbstractController
         $attribute = $attributeRepository->find($attribute_id);
         $form = $this->createForm(OptionType::class, $option);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $optionRepository->add($option, true);
-
             return $this->redirectToRoute('app_attribute_edit', [
                 'form_id' => $attribute->getForm()->getId(),
                 'id' => $attribute->getId()

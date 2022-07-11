@@ -34,7 +34,6 @@ class Attribute
     private $position;
 
     #[ORM\ManyToOne(targetEntity: Form::class, inversedBy: 'attributes')]
-    #[ORM\JoinColumn(nullable: false)]
     private $form;
 
     #[ORM\Column(type: 'boolean', nullable: true)]

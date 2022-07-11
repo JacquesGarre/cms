@@ -9,6 +9,7 @@ use App\Repository\EntityRepository;
 use App\Repository\EntityMetaRepository;
 use App\Repository\FormRepository;
 use App\Repository\IndexRepository;
+use App\Repository\MenuItemRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,6 @@ class EntityController extends AbstractController
     {
         $model = $formRepository->find($id);
         $view = $indexRepository->find($view_id);
-
         $entities = $entityRepository->findBy(['model' => $model]);
 
         return $this->render('entity/index.html.twig', [

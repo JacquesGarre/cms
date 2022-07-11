@@ -1,10 +1,4 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Option index{% endblock %}
-
 {% block body %}
-    <h1>Option index</h1>
-
     <table class="table">
         <thead>
             <tr>
@@ -25,10 +19,8 @@
                 <td>{{ option.disabled ? 'Yes' : 'No' }}</td>
                 <td>{{ option.selected ? 'Yes' : 'No' }}</td>
                 <td>{{ option.value }}</td>
-                <td>{{ option.selects | json_encode }}</td>
                 <td>
-                    <a href="{{ path('app_option_show', {'id': option.id}) }}">show</a>
-                    <a href="{{ path('app_option_edit', {'id': option.id}) }}">edit</a>
+                    <a href="{{ path('app_option_edit', {'id': option.id, 'attribute_id':attribute.id}) }}">edit</a>
                     {{ include('option/_delete_form.html.twig', {'button_label': 'Delete'}) }}
                 </td>
             </tr>
@@ -40,5 +32,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_option_new') }}">Create new</a>
+    <a href="{{ path('app_option_new', {'attribute_id':attribute.id} ) }}">Create new</a>
 {% endblock %}

@@ -19,7 +19,7 @@ class AttributeController extends AbstractController
     {   
         $model = $formRepository->find($id);
         return $this->render('attribute/index.html.twig', [
-            'attributes' => $attributeRepository->findBy(['form' => $model]),
+            'attributes' => $attributeRepository->findBy(['form' => $model], ['position' => 'ASC']),
             'model' => $model
         ]);
     }
@@ -72,11 +72,12 @@ class AttributeController extends AbstractController
         return $this->renderForm('attribute/edit.html.twig', [
             'attribute' => $attribute,
             'form' => $form,
-            'model' => $model
+            'model' => $model,
+            'options' => $attribute->getOptions()
         ]);
     }
 
-    #[Route('/{form_id}/attributes/{id}', name: 'app_attribute_delete', methods: ['POST'])]
+    #[Route('/{form_id}/attributes/{id}/delete', name: 'app_attribute_delete', methods: ['POST'])]
     public function delete(Request $request, Attribute $attribute, AttributeRepository $attributeRepository, FormRepository $formRepository, int $form_id): Response
     {   
         $model = $formRepository->find($form_id);

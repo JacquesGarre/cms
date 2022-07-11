@@ -15,7 +15,7 @@ class IndexColumn
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Index::class, cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: Index::class)]
     private $view;
 
     #[ORM\ManyToOne(targetEntity: Attribute::class)]

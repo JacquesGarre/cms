@@ -19,6 +19,7 @@ class Form
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'form', targetEntity: Attribute::class, orphanRemoval: true)]
+    #[ORM\OrderBy(["position" => "ASC"])]
     private $attributes;
 
     #[ORM\OneToMany(mappedBy: 'model', targetEntity: Index::class, orphanRemoval: true)]

@@ -8,9 +8,9 @@
     <table class="table">
         <thead>
             <tr>
-            {% for col in view.indexColumns %}
-                <th>{{col.field.label}}</th>
-            {% endfor %}
+                {% for col in view.indexColumns %}
+                    <th>{{col.field.label}}</th>
+                {% endfor %}
                 <th>actions</th>
             </tr>            
         </thead>

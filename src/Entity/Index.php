@@ -82,4 +82,16 @@ class Index
     public function __toString() {
         return $this->name;
     }
+
+    public function removeIndexColumn(IndexColumn $indexColumn): self
+    {
+        if ($this->indexColumns->removeElement($indexColumn)) {
+            // set the owning side to null (unless already changed)
+            if ($indexColumn->getView() === $this) {
+                $indexColumn->setView(null);
+            }
+        }
+
+        return $this;
+    }
 }

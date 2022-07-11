@@ -12,11 +12,10 @@ class OptionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('value')
             ->add('text')
+            ->add('value')
             ->add('disabled')
             ->add('selected')
-            ->add('selects')
         ;
     }
 

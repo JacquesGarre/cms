@@ -55,7 +55,6 @@ class AttributeType extends AbstractType
             ->add('position')
             ->add('cols')
             ->add('height')
-            ->add('options')
         ;
     }
 

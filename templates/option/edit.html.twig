@@ -7,7 +7,7 @@
 
     {{ include('option/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_option_index') }}">back to list</a>
-
+    <a href="{{ path('app_attribute_edit', {'id':attribute.id, 'form_id':attribute.form.id} ) }}">back to list</a>
+    
     {{ include('option/_delete_form.html.twig') }}
 {% endblock %}

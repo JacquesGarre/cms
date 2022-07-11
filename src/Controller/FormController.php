@@ -59,7 +59,7 @@ class FormController extends AbstractController
     public function edit(Request $request, Form $model, FormRepository $formRepository, AttributeRepository $attributeRepository, IndexRepository $indexRepository): Response
     {       
         $indices = $indexRepository->findBy(['model' => $model]);
-        $attributes = $attributeRepository->findBy(['form' => $model]);
+        $attributes = $attributeRepository->findBy(['form' => $model], ['position' => 'ASC']);
         $form = $this->createForm(FormType::class, $model);
         $form->handleRequest($request);
 
@@ -77,7 +77,7 @@ class FormController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_form_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_form_delete', methods: ['POST'])]
     public function delete(Request $request, Form $form, FormRepository $formRepository, MenuItemRepository $menuRepository, IndexRepository $indexRepository, AttributeRepository $attributeRepository, IndexColumnRepository $colRepository): Response
     {
 

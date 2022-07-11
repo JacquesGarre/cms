@@ -1,0 +1,29 @@
+{% block body %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for index_column in index.indexColumns %}
+            <tr>
+                <td>{{ index_column.field }}</td>
+                <td>{{ index_column.position }}</td>
+                <td>
+                    <a href="{{ path('app_index_column_edit', {'id': index_column.id, 'model_id': model.id,'index_id': index.id}) }}">edit</a>
+                    {{ include('index_column/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_index_column_new', {'model_id': model.id,'index_id': index.id}) }}">Create new</a>
+{% endblock %}

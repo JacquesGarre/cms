@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ model.name }}{% endblock %}
+
+{% block body %}
+    <h1>{{ model.name }}</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>CreationDate</th>
+                <th>UpdateDate</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>{{ entity.creationDate ? entity.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ entity.updateDate ? entity.updateDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_entity_show', {'id': entity.id}) }}">show</a>
+                    <a href="{{ path('app_entity_edit', {'id': entity.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_entity_new', {'id':model.id}) }}">Create new</a>
+{% endblock %}

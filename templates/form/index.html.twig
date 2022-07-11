@@ -8,19 +8,16 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Name</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for form in forms %}
+        {% for model in forms %}
             <tr>
-                <td>{{ form.id }}</td>
-                <td>{{ form.name }}</td>
+                <td>{{ model.name }}</td>
                 <td>
-                    <a href="{{ path('app_form_show', {'id': form.id}) }}">show</a>
-                    <a href="{{ path('app_form_edit', {'id': form.id}) }}">edit</a>
+                    <a href="{{ path('app_form_edit', {'id': model.id}) }}">edit</a>
                     {{ include('form/_delete_form.html.twig', {'button_label': 'Delete'}) }}
                 </td>
             </tr>

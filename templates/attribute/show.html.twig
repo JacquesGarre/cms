@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Attribute{% endblock %}
+
+{% block body %}
+    <h1>Attribute</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ attribute.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ attribute.name }}</td>
+            </tr>
+            <tr>
+                <th>Disabled</th>
+                <td>{{ attribute.disabled ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Required</th>
+                <td>{{ attribute.required ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Col</th>
+                <td>{{ attribute.col }}</td>
+            </tr>
+            <tr>
+                <th>Position</th>
+                <td>{{ attribute.position }}</td>
+            </tr>
+            <tr>
+                <th>Checked</th>
+                <td>{{ attribute.checked ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Placeholder</th>
+                <td>{{ attribute.placeholder }}</td>
+            </tr>
+            <tr>
+                <th>Readonly</th>
+                <td>{{ attribute.readonly ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ attribute.type }}</td>
+            </tr>
+            <tr>
+                <th>DefaultValue</th>
+                <td>{{ attribute.defaultValue }}</td>
+            </tr>
+            <tr>
+                <th>Multiple</th>
+                <td>{{ attribute.multiple ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Cols</th>
+                <td>{{ attribute.cols }}</td>
+            </tr>
+            <tr>
+                <th>Height</th>
+                <td>{{ attribute.height }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_attribute_index', {'id': model.id}) }}">back to list</a>
+
+    <a href="{{ path('app_attribute_edit', {'id': attribute.id, 'form_id': model.id}) }}">edit</a>
+
+    {{ include('attribute/_delete_form.html.twig') }}
+{% endblock %}

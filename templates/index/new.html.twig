@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Index{% endblock %}
+
+{% block body %}
+    <h1>Create new Index</h1>
+
+    {{ include('index/_form.html.twig') }}
+
+    <a href="{{ path('app_index_index', {'id':model.id} ) }}">back to list</a>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit IndexColumn{% endblock %}
+
+{% block body %}
+    <h1>Edit IndexColumn</h1>
+
+    {{ include('index_column/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_index_column_index', {'model_id': model.id,'index_id': index.id}) }}">back to list</a>
+
+    {{ include('index_column/_delete_form.html.twig') }}
+{% endblock %}

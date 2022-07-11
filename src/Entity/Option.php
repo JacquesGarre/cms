@@ -28,9 +28,6 @@ class Option
     #[ORM\Column(type: 'string', length: 255)]
     private $value;
 
-    #[ORM\ManyToMany(targetEntity: Select::class, mappedBy: 'options')]
-    private $selects;
-
     public function __construct()
     {
         $this->selects = new ArrayCollection();
@@ -85,33 +82,6 @@ class Option
     public function setValue(string $value): self
     {
         $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Select>
-     */
-    public function getSelects(): Collection
-    {
-        return $this->selects;
-    }
-
-    public function addSelect(Select $select): self
-    {
-        if (!$this->selects->contains($select)) {
-            $this->selects[] = $select;
-            $select->addOption($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSelect(Select $select): self
-    {
-        if ($this->selects->removeElement($select)) {
-            $select->removeOption($this);
-        }
 
         return $this;
     }

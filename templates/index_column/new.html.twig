@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New column{% endblock %}
+
+{% block body %}
+    <h1>Create new column for {{index.name}} view ({{model.name}})</h1>
+
+    {{ include('index_column/_form.html.twig') }}
+
+    <a href="{{ path('app_index_column_index', {'model_id': model.id,'index_id': index.id}) }}">back to list</a>
+{% endblock %}

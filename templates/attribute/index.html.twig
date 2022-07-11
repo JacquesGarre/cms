@@ -1,0 +1,58 @@
+
+{% block body %}
+
+    <h3>Attributes</h3>
+    <a href="{{ path('app_attribute_new', {'id': model.id}) }}">Create new</a>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Label</th>
+                <th>Name</th>
+                <th>Disabled</th>
+                <th>Required</th>
+                <th>Col</th>
+                <th>Position</th>
+                <th>Checked</th>
+                <th>Placeholder</th>
+                <th>Readonly</th>
+                <th>Type</th>
+                <th>DefaultValue</th>
+                <th>Multiple</th>
+                <th>Cols</th>
+                <th>Height</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for attribute in attributes %}
+            <tr>
+                <td>{{ attribute.label }}</td>
+                <td>{{ attribute.name }}</td>
+                <td>{{ attribute.disabled ? 'Yes' : 'No' }}</td>
+                <td>{{ attribute.required ? 'Yes' : 'No' }}</td>
+                <td>{{ attribute.col }}</td>
+                <td>{{ attribute.position }}</td>
+                <td>{{ attribute.checked ? 'Yes' : 'No' }}</td>
+                <td>{{ attribute.placeholder }}</td>
+                <td>{{ attribute.readonly ? 'Yes' : 'No' }}</td>
+                <td>{{ attribute.type }}</td>
+                <td>{{ attribute.defaultValue }}</td>
+                <td>{{ attribute.multiple ? 'Yes' : 'No' }}</td>
+                <td>{{ attribute.cols }}</td>
+                <td>{{ attribute.height }}</td>
+                <td>
+                    <a href="{{ path('app_attribute_edit', {'id': attribute.id, 'form_id': model.id}) }}">edit</a>
+                    {{ include('attribute/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="15">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

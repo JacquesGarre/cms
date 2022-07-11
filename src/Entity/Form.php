@@ -18,12 +18,17 @@ class Form
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    #[ORM\OneToMany(mappedBy: 'form', targetEntity: Field::class)]
-    private $fields;
+    #[ORM\OneToMany(mappedBy: 'form', targetEntity: Attribute::class, orphanRemoval: true)]
+    private $attributes;
+
+    #[ORM\OneToMany(mappedBy: 'model', targetEntity: Index::class, orphanRemoval: true)]
+    private $indices;
 
     public function __construct()
     {
         $this->fields = new ArrayCollection();
+        $this->attributes = new ArrayCollection();
+        $this->indices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -43,38 +48,68 @@ class Form
         return $this;
     }
 
-    /**
-     * @return Collection<int, Field>
-     */
-    public function getFields(): Collection
-    {
-        return $this->fields;
+    public function __toString() {
+        return $this->name;
     }
 
-    public function addField(Field $field): self
+    /**
+     * @return Collection<int, Attribute>
+     */
+    public function getAttributes(): Collection
     {
-        if (!$this->fields->contains($field)) {
-            $this->fields[] = $field;
-            $field->setForm($this);
+        return $this->attributes;
+    }
+
+    public function addAttribute(Attribute $attribute): self
+    {
+        if (!$this->attributes->contains($attribute)) {
+            $this->attributes[] = $attribute;
+            $attribute->setForm($this);
         }
 
         return $this;
     }
 
-    public function removeField(Field $field): self
+    public function removeAttribute(Attribute $attribute): self
     {
-        if ($this->fields->removeElement($field)) {
+        if ($this->attributes->removeElement($attribute)) {
             // set the owning side to null (unless already changed)
-            if ($field->getForm() === $this) {
-                $field->setForm(null);
+            if ($attribute->getForm() === $this) {
+                $attribute->setForm(null);
             }
         }
 
         return $this;
     }
 
-    public function __toString() {
-        return $this->name;
+    /**
+     * @return Collection<int, Index>
+     */
+    public function getIndices(): Collection
+    {
+        return $this->indices;
+    }
+
+    public function addIndex(Index $index): self
+    {
+        if (!$this->indices->contains($index)) {
+            $this->indices[] = $index;
+            $index->setModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndex(Index $index): self
+    {
+        if ($this->indices->removeElement($index)) {
+            // set the owning side to null (unless already changed)
+            if ($index->getModel() === $this) {
+                $index->setModel(null);
+            }
+        }
+
+        return $this;
     }
 
 }

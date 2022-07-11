@@ -14,7 +14,9 @@
         {% endblock %}
     </head>
     <body>
-        {% include('menu.html.twig') %}
+        {{ render(controller(
+            'App\\Controller\\MenuController::menu'
+        )) }}
         {% block body %}{% endblock %}
     </body>
 </html>

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Menu{% endblock %}
+
+{% block body %}
+    <h1>Menu</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Link</th>
+                <th>Position</th>
+                <th>Route</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for menu_item in menu_items %}
+            <tr>
+                <td>{{ menu_item.name }}</td>
+                <td>{{ menu_item.link }}</td>
+                <td>{{ menu_item.position }}</td>
+                <td>{{ menu_item.route }}</td>
+                <td>
+                    <a href="{{ path('app_menu_item_edit', {'id': menu_item.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_menu_item_new') }}">Create new</a>
+{% endblock %}

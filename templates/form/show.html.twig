@@ -4,28 +4,11 @@
 
 {% block body %}
 
+    <h1>Model {{ form.name }}</h1>
     <a href="{{ path('app_form_index') }}">back to list</a>
     <a href="{{ path('app_form_edit', {'id': form.id}) }}">edit</a>
     {{ include('form/_delete_form.html.twig') }}
-
-    <h1>Model {{ form.name }}</h1>
-    <h3>Attributes</h3>
-    <table class="table">
-        <tbody>
-            {% for field in form.fields %}
-                <tr>
-                    <td>{{field.label}} ({{field.name}})</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ path('app_input_new') }}">Create new input</a><br>
-    <a href="{{ path('app_textarea_new') }}">Create new textarea</a><br>
-    <a href="{{ path('app_select_new') }}">Create new select</a><br>
-
-
-    
-
-    
+    <hr>
+    {{ include('attribute/index.html.twig') }}
 
 {% endblock %}

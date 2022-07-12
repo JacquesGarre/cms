@@ -25,12 +25,14 @@ class EntityController extends AbstractController
         $currentPage = !empty($request->query->get('page')) ? $request->query->get('page') : 1;
         $model = $formRepository->find($id);
         $view = $indexRepository->find($view_id);
-        $order = [];
+
         $limit = !empty($view->getPagination()) ? $view->getPagination() : null;
         $offset = $limit ? ($currentPage-1) * $limit : 0 ;
         $allEntities = $entityRepository->findBy(['model' => $model]);
         $pages = $limit ? ceil(count($allEntities)/$limit) : false;
-        $entities = $entityRepository->findBy(['model' => $model], $order, $limit, $offset);
+
+        // Query data for this view
+        $entities = $entityRepository->findByView($view, $currentPage);
 
         $patterns = [];
         $externalEntities = [];

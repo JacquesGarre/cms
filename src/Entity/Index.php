@@ -29,6 +29,12 @@ class Index
     #[ORM\Column(type: 'integer', nullable: true)]
     private $pagination;
 
+    #[ORM\ManyToOne(targetEntity: IndexColumn::class)]
+    private $orderBy;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $orderDirection;
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
@@ -106,6 +112,30 @@ class Index
     public function setPagination(?int $pagination): self
     {
         $this->pagination = $pagination;
+
+        return $this;
+    }
+
+    public function getOrderBy(): ?IndexColumn
+    {
+        return $this->orderBy;
+    }
+
+    public function setOrderBy(?IndexColumn $orderBy): self
+    {
+        $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function getOrderDirection(): ?string
+    {
+        return $this->orderDirection;
+    }
+
+    public function setOrderDirection(?string $orderDirection): self
+    {
+        $this->orderDirection = $orderDirection;
 
         return $this;
     }

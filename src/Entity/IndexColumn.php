@@ -80,4 +80,8 @@ class IndexColumn
 
         return $this;
     }
+
+    public function __toString() {
+        return !empty($this->name) ? $this->name : $this->field->getLabel();
+    }
 }

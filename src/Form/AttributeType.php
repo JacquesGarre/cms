@@ -8,11 +8,28 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\LabelType;
+use App\Repository\FormRepository;
+use App\Repository\AttributeRepository;
 
 class AttributeType extends AbstractType
 {
+    public function __construct(FormRepository $formRepository, AttributeRepository $attributeRepository)
+    {
+        $this->formRepository = $formRepository;
+        $this->attributeRepository = $attributeRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $entities = $this->formRepository->findAll();
+        $selectEntities = [
+            '' => '',
+            'Options' => 'option'
+        ];
+        foreach($entities as $entity){
+            $selectEntities[$entity->getName()] = $entity->getId();
+        }
+
         $builder
             ->add('label', LabelType::class)
             ->add('placeholder')
@@ -45,6 +62,10 @@ class AttributeType extends AbstractType
                     "url" => "url",
                     "week" => "week",
                 ]
+            ])
+            ->add('selectEntity', ChoiceType::class, [
+                'choices' => $selectEntities,
+                'required' => false
             ])
             ->add('disabled')
             ->add('required')

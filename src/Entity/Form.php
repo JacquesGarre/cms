@@ -28,6 +28,9 @@ class Form
     #[ORM\OneToMany(mappedBy: 'model', targetEntity: Entity::class, orphanRemoval: true)]
     private $entities;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $displayPattern;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
@@ -143,6 +146,18 @@ class Form
                 $entity->setModel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDisplayPattern(): ?string
+    {
+        return $this->displayPattern;
+    }
+
+    public function setDisplayPattern(?string $displayPattern): self
+    {
+        $this->displayPattern = $displayPattern;
 
         return $this;
     }

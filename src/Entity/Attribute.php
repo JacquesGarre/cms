@@ -63,6 +63,12 @@ class Attribute
     #[ORM\Column(type: 'integer', nullable: true)]
     private $height;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $selectType;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $selectEntity;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
@@ -279,6 +285,30 @@ class Attribute
 
     public function __toString() {
         return $this->label;
+    }
+
+    public function getSelectType(): ?string
+    {
+        return $this->selectType;
+    }
+
+    public function setSelectType(?string $selectType): self
+    {
+        $this->selectType = $selectType;
+
+        return $this;
+    }
+
+    public function getSelectEntity(): ?string
+    {
+        return $this->selectEntity;
+    }
+
+    public function setSelectEntity(?string $selectEntity): self
+    {
+        $this->selectEntity = $selectEntity;
+
+        return $this;
     }
 
 }

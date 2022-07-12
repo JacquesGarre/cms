@@ -6,8 +6,6 @@
                 <th>Text</th>
                 <th>Disabled</th>
                 <th>Selected</th>
-                <th>Value</th>
-                <th>Selects</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -18,7 +16,6 @@
                 <td>{{ option.text }}</td>
                 <td>{{ option.disabled ? 'Yes' : 'No' }}</td>
                 <td>{{ option.selected ? 'Yes' : 'No' }}</td>
-                <td>{{ option.value }}</td>
                 <td>
                     <a href="{{ path('app_option_edit', {'id': option.id, 'attribute_id':attribute.id}) }}">edit</a>
                     {{ include('option/_delete_form.html.twig', {'button_label': 'Delete'}) }}

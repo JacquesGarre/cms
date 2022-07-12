@@ -39,20 +39,23 @@ class EntityRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Entity[] Returns an array of Entity objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Entity[] Returns an array of Entity objects
+    */
+   public function findByModel($model): array
+   {
+
+       return $this->createQueryBuilder('e')
+           ->andWhere('e.exampleField = :val')
+           ->setParameter('val', $model)
+           ->orderBy('e.id', 'ASC')
+           ->setMaxResults(10)
+           ->getQuery()
+           ->getResult()
+       ;
+
+       
+   }
 
 //    public function findOneBySomeField($value): ?Entity
 //    {

@@ -19,7 +19,31 @@
             <tr>
                 {% for col in view.indexColumns %}
                     <td>
-                        {{ entity.getEntityMeta(col.field.name) is not empty ? entity.getEntityMeta(col.field.name).getValue() : '' }}
+                        {% if entity.getEntityMeta(col.field.name) is not empty %}
+                            {% if col.field.type == 'select' and (col.field.selectEntity == 'option' or col.field.selectEntity is empty) %} 
+
+                                {% set value = entity.getEntityMeta(col.field.name).value %}
+                                {{ col.field.options|filter(option => option.id == value)|join(', ') }}
+
+                            {% elseif col.field.type == 'select' %}
+
+                                {% set modelID = col.field.selectEntity %}
+                                {% set pattern = patterns[modelID] %}
+                                {% set entityID = entity.getEntityMeta(col.field.name).value %}
+                                {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == entityID)|first %}
+
+                                {% for field in externalEntity.getEntityMetas() %}
+                                    {% set pattern = pattern|replace({ (field.name): field.value }) %}
+                                {% endfor %}
+                                
+                                {{ pattern }}
+
+                            {% else %}
+
+                                {{ entity.getEntityMeta(col.field.name).value }}
+
+                            {% endif %}
+                        {% endif %}
                     </td>
                 {% endfor %}
                 <td>

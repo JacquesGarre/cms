@@ -12,9 +12,17 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType as EntityFieldType;
 use App\Entity\Option;
+use App\Repository\EntityRepository;
+use App\Repository\FormRepository;
 
 class EntityFormType extends AbstractType
 {
+    public function __construct(EntityRepository $entityRepository, FormRepository $formRepository)
+    {
+        $this->entityRepository = $entityRepository;
+        $this->formRepository = $formRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {   
         $fields = $options['data']->getModel()->getAttributes();
@@ -28,7 +36,7 @@ class EntityFormType extends AbstractType
                     'placeholder' => $field->getPlaceholder(),
                     'readonly' => $field->isReadonly(),
                 ], 
-                'data' => $field->getDefaultValue()
+                'empty_data' => $field->getDefaultValue()
             ];
             switch($field->getType()){
                 case 'text':
@@ -41,12 +49,31 @@ class EntityFormType extends AbstractType
                 break;
                 case 'select':
                     $class = EntityFieldType::class;
-                    $options['class'] = Option::class;
-                    $options['choice_label'] = 'text';
-                    $options['choice_value'] = function (?Option $entity) {
-                        return $entity ? $entity->getId() : '';
-                    };
-                    $options['choices'] = $field->getOptions();
+
+                    if($field->getSelectEntity() == 'option' || empty($field->getSelectEntity())){
+                        $options['class'] = Option::class;
+                        $options['choices'] = $field->getOptions();
+                        $options['choice_label'] = 'text';
+                        $options['choice_value'] = function (?Option $entity) {
+                            return $entity ? $entity->getId() : '';
+                        };
+                    } else {
+
+                        $model = $this->formRepository->find($field->getSelectEntity());
+                        $entities = $this->entityRepository->findBy(['model' => $model]);
+                        $class = ChoiceType::class;
+                        $options['choices'] = ['' => ''];
+                        foreach($entities as $index => $entity)
+                        {
+                            $pattern = $model->getDisplayPattern();
+                            foreach($entity->getEntityMetas() as $meta)
+                            {
+                                $pattern = str_replace($meta->getName(), $meta->getValue(), $pattern);
+                            }
+                            $options['choices'][$pattern] = $entity->getId();
+                        }
+                    }
+
                 break;
             }
             $builder->add($field->getName(), $class, $options);

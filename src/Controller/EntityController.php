@@ -5,11 +5,12 @@ namespace App\Controller;
 use App\Entity\Entity;
 use App\Entity\EntityMeta;
 use App\Form\EntityFormType;
+use App\Repository\AttributeRepository;
 use App\Repository\EntityRepository;
 use App\Repository\EntityMetaRepository;
 use App\Repository\FormRepository;
 use App\Repository\IndexRepository;
-use App\Repository\MenuItemRepository;
+use App\Repository\OptionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,11 +25,30 @@ class EntityController extends AbstractController
         $model = $formRepository->find($id);
         $view = $indexRepository->find($view_id);
         $entities = $entityRepository->findBy(['model' => $model]);
+        $patterns = [];
+        $externalEntities = [];
+        foreach($view->getIndexColumns() as $column){
+            if(
+                $column->getField()->getType() == 'select' 
+                && (
+                    $column->getField()->getSelectEntity() !== 'options' or !empty($column->getField()->getSelectEntity())
+                ) 
+            ){  
+                $entityID = $column->getField()->getSelectEntity();
+                $entity = $formRepository->find($entityID);
+                if(!empty($entity)){
+                    $patterns[$entity->getId()] = $entity->getDisplayPattern();
+                    $externalEntities[$entity->getId()] = $entityRepository->findBy(['model' => $entity]);
+                }
+            }
+        }
 
         return $this->render('entity/index.html.twig', [
             'entities' => $entities,
             'model' => $model,
-            'view' => $view
+            'view' => $view,
+            'patterns' => $patterns,
+            'externalEntities' => $externalEntities
         ]);
     }
 
@@ -85,28 +105,48 @@ class EntityController extends AbstractController
     // }
 
     #[Route('/{form_id}/{view_id}/details/{id}', name: 'app_entity_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Entity $entity, EntityRepository $entityRepository, EntityMetaRepository $entityMetaRepository, FormRepository $formRepository, int $form_id, IndexRepository $indexRepository, int $view_id): Response
+    public function edit(
+        Request $request, 
+        Entity $entity, 
+        EntityRepository $entityRepository, 
+        EntityMetaRepository $entityMetaRepository, 
+        FormRepository $formRepository, 
+        int $form_id, 
+        IndexRepository $indexRepository, 
+        int $view_id,
+        AttributeRepository $attributeRepository,
+        OptionRepository $optionRepository): Response
     {
         $model = $formRepository->find($form_id);
-        $fields = $model->getAttributes();
         $view = $indexRepository->find($view_id);
-
         $form = $this->createForm(EntityFormType::class, $entity);
         foreach($entity->getEntityMetas() as $meta){
-            $form->get($meta->getName())->setData($meta->getValue());
+
+            $attribute = $attributeRepository->findOneBy([
+                'name' => $meta->getName(),
+                'form' => $model
+            ]);
+            if($attribute->getType() == 'select' && (empty($attribute->getSelectEntity()) || $attribute->getSelectEntity() == 'option')){
+                $option = $optionRepository->findOneBy(['id' => $meta->getValue()]);
+                $form->get($meta->getName())->setData($option);
+            } else {
+                $form->get($meta->getName())->setData($meta->getValue());
+            }
+
         }
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            
             $updateDate = new \DateTime();
             $entity->setUpdateDate($updateDate);
             $entityRepository->add($entity, true);
-            
+
+            $fields = $model->getAttributes();
             foreach($fields as $field){
                 $fieldID = $field->getName();
-                $fieldValue = $form->get($fieldID)->getData();
+                $fieldValue = $form->get($fieldID)->getViewData();
                 $meta = $entity->getEntityMeta($fieldID);
                 if(empty($meta)){
                     $meta = new EntityMeta();
@@ -148,4 +188,6 @@ class EntityController extends AbstractController
             'view_id' => $view->getId()
         ], Response::HTTP_SEE_OTHER);
     }
+
+    
 }

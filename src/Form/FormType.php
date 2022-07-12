@@ -13,6 +13,7 @@ class FormType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('displayPattern')
         ;
     }
 

@@ -26,6 +26,9 @@ class Index
     #[ORM\OneToMany(targetEntity: IndexColumn::class, mappedBy: 'view', orphanRemoval: true)]
     private $indexColumns;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $pagination;
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
@@ -91,6 +94,18 @@ class Index
                 $indexColumn->setView(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPagination(): ?int
+    {
+        return $this->pagination;
+    }
+
+    public function setPagination(?int $pagination): self
+    {
+        $this->pagination = $pagination;
 
         return $this;
     }

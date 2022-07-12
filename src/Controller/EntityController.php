@@ -20,11 +20,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class EntityController extends AbstractController
 {
     #[Route('/{id}/{view_id}', name: 'app_entity_index', methods: ['GET'])]
-    public function index(EntityRepository $entityRepository, FormRepository $formRepository, int $id, IndexRepository $indexRepository, int $view_id): Response
+    public function index(Request $request, EntityRepository $entityRepository, FormRepository $formRepository, int $id, IndexRepository $indexRepository, int $view_id): Response
     {
+        $currentPage = !empty($request->query->get('page')) ? $request->query->get('page') : 1;
         $model = $formRepository->find($id);
         $view = $indexRepository->find($view_id);
-        $entities = $entityRepository->findBy(['model' => $model]);
+        $order = [];
+        $limit = !empty($view->getPagination()) ? $view->getPagination() : null;
+        $offset = $limit ? ($currentPage-1) * $limit : 0 ;
+        $allEntities = $entityRepository->findBy(['model' => $model]);
+        $pages = $limit ? ceil(count($allEntities)/$limit) : false;
+        $entities = $entityRepository->findBy(['model' => $model], $order, $limit, $offset);
+
         $patterns = [];
         $externalEntities = [];
         foreach($view->getIndexColumns() as $column){   
@@ -50,7 +57,9 @@ class EntityController extends AbstractController
             'model' => $model,
             'view' => $view,
             'patterns' => $patterns,
-            'externalEntities' => $externalEntities
+            'externalEntities' => $externalEntities,
+            'pages' => $pages,
+            'total' => count($allEntities)
         ]);
     }
 

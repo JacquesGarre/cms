@@ -13,6 +13,7 @@ class IndexType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('pagination')
         ;
     }
 

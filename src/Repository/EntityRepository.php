@@ -77,7 +77,7 @@ class EntityRepository extends ServiceEntityRepository
         $rsm->addEntityResult('\App\Entity\Entity', 'e');
         $rsm->addFieldResult('e', 'id', 'id');
         $sql = $this->getQuery($view, $orderBy, $limit, $offset);
-        dd($sql);
+        //dd($sql);
         $query = $this->_em->createNativeQuery($sql, $rsm);
         $query->setParameter(1, $modelID);
         $entities = $query->getResult();
@@ -89,10 +89,11 @@ class EntityRepository extends ServiceEntityRepository
     public function getQuery(Index $view, $orderBy, $limit, $offset)
     {   
         $columns = $view->getIndexColumns();
+        $modelFields = $view->getModel()->getAttributes();
                
         return "SELECT e.`id`, ".$this->getMetadataColumns($columns, $view)." 
             FROM `entity` e 
-            LEFT JOIN (".$this->getMetadataJoinQuery($columns).") em 
+            LEFT JOIN (".$this->getMetadataJoinQuery($modelFields).") em 
             ON e.`id` = em.`entity_id` 
             WHERE e.`model_id` = ? ".$orderBy." ".$limit." ".$offset.";";
 
@@ -185,11 +186,11 @@ class EntityRepository extends ServiceEntityRepository
         return implode(', ', $cols);
     }
 
-    public function getMetadataJoinQuery($columns)
+    public function getMetadataJoinQuery($modelFields)
     {
         $cols = [];
-        foreach($columns as $column){
-            $cols[] = "MAX(CASE WHEN (name='".$column->getField()->getName()."') THEN value ELSE NULL END) AS '".$column->getField()->getName()."'";
+        foreach($modelFields as $field){
+            $cols[] = "MAX(CASE WHEN (name='".$field->getName()."') THEN value ELSE NULL END) AS '".$field->getName()."'";
         }
         return "SELECT entity_id, ".implode(', ', $cols)." FROM `entity_meta` group by entity_id";
     }

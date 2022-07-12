@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Attribute</th>
                 <th>Position</th>
                 <th>actions</th>
             </tr>
@@ -10,6 +11,7 @@
         <tbody>
         {% for index_column in index.indexColumns %}
             <tr>
+                <td>{{ index_column.name is not empty ? index_column.name : index_column.field  }}</td>
                 <td>{{ index_column.field }}</td>
                 <td>{{ index_column.position }}</td>
                 <td>

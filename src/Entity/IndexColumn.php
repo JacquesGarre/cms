@@ -25,6 +25,9 @@ class IndexColumn
     #[ORM\Column(type: 'integer')]
     private $position;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $name;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +65,18 @@ class IndexColumn
     public function setPosition(int $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

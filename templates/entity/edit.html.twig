@@ -3,7 +3,15 @@
 {% block title %}Edit Entity{% endblock %}
 
 {% block body %}
-    <h1>Edit Entity</h1>
+    <h1>    
+        {% set pattern = model.getDisplayPattern() %}  
+        {% for field in model.attributes %}
+            {% if entity.getEntityMeta(field.name) is not empty %}
+                {% set pattern = pattern|replace({ (field.name) : entity.getEntityMeta(field.name).value }) %}  
+            {% endif %}
+        {% endfor %}
+        {{ pattern }}
+    </h1>
 
     {{ include('entity/_form.html.twig', {'button_label': 'Update'}) }}
 

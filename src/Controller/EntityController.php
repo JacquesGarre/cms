@@ -27,7 +27,7 @@ class EntityController extends AbstractController
         $entities = $entityRepository->findBy(['model' => $model]);
         $patterns = [];
         $externalEntities = [];
-        foreach($view->getIndexColumns() as $column){
+        foreach($view->getIndexColumns() as $column){   
             if(
                 $column->getField()->getType() == 'select' 
                 && (
@@ -41,6 +41,8 @@ class EntityController extends AbstractController
                     $externalEntities[$entity->getId()] = $entityRepository->findBy(['model' => $entity]);
                 }
             }
+            $patterns[$column->getField()->getForm()->getId()] = $column->getField()->getForm()->getDisplayPattern();
+            $externalEntities[$column->getField()->getForm()->getId()] = $entityRepository->findBy(['model' => $column->getField()->getForm()]);
         }
 
         return $this->render('entity/index.html.twig', [

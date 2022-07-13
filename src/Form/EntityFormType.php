@@ -54,8 +54,12 @@ class EntityFormType extends AbstractType
                         $options['class'] = Option::class;
                         $options['choices'] = $field->getOptions();
                         $options['choice_label'] = 'text';
-                        $options['choice_value'] = function (?Option $entity) {
-                            return $entity ? $entity->getId() : '';
+                        $options['choice_value'] = function ($entity) {
+                            if($entity instanceof Option){
+                                return $entity ? $entity->getId() : '';
+                            } else {
+                                return intval($entity);
+                            }
                         };
                     } else {
 

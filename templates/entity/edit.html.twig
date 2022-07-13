@@ -18,4 +18,18 @@
     <a href="{{ path('app_entity_index', {'id': model.id, 'view_id':view.id}) }}">back to list</a>
 
     {{ include('entity/_delete_form.html.twig') }}
+
+    <hr>
+    {% for subview in subviews %}
+        {{ 
+            render(controller('App\\Controller\\EntityController::index', {
+                'id':model.id,
+                'view_id':subview.view_id,
+                'relation_id':subview.relation_id,
+                'parent_id':entity.id
+            })) 
+        }}
+        <hr>
+    {% endfor %}
+
 {% endblock %}

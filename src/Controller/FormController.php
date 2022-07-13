@@ -13,6 +13,7 @@ use App\Repository\AttributeRepository;
 use App\Repository\IndexRepository;
 use App\Repository\MenuItemRepository;
 use App\Repository\IndexColumnRepository;
+use App\Repository\RelationRepository;
 
 #[Route('/models')]
 class FormController extends AbstractController
@@ -56,7 +57,14 @@ class FormController extends AbstractController
     // }
 
     #[Route('/{id}', name: 'app_form_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Form $model, FormRepository $formRepository, AttributeRepository $attributeRepository, IndexRepository $indexRepository): Response
+    public function edit(
+        Request $request, 
+        Form $model, 
+        FormRepository $formRepository, 
+        AttributeRepository $attributeRepository, 
+        IndexRepository $indexRepository,
+        RelationRepository $relationRepository
+    ): Response
     {       
         $indices = $indexRepository->findBy(['model' => $model]);
         $attributes = $attributeRepository->findBy(['form' => $model], ['position' => 'ASC']);
@@ -73,7 +81,8 @@ class FormController extends AbstractController
             'model' => $model,
             'form' => $form,
             'attributes' => $attributes,
-            'indices' => $indices
+            'indices' => $indices,
+            'relations' => $relationRepository->findBy(['model' => $model], ['position' => 'ASC']),
         ]);
     }
 

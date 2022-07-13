@@ -28,14 +28,17 @@ class IndexController extends AbstractController
     #[Route('/{id}/indices/new', name: 'app_index_new', methods: ['GET', 'POST'])]
     public function new(Request $request, IndexRepository $indexRepository, FormRepository $formRepository, int $id): Response
     {   
+
         $model = $formRepository->find($id);
 
         $index = new Index();
+        $index->setModel($model);
+        
         $form = $this->createForm(IndexType::class, $index);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $index->setModel($model);
+            
             $indexRepository->add($index, true);
 
             return $this->redirectToRoute('app_index_edit', [

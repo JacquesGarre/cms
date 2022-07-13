@@ -69,9 +69,13 @@ class Attribute
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $selectEntity;
 
+    #[ORM\OneToMany(mappedBy: 'mappedBy', targetEntity: Relation::class, orphanRemoval: true)]
+    private $relations;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
+        $this->relations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -307,6 +311,36 @@ class Attribute
     public function setSelectEntity(?string $selectEntity): self
     {
         $this->selectEntity = $selectEntity;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getRelations(): Collection
+    {
+        return $this->relations;
+    }
+
+    public function addRelation(Relation $relation): self
+    {
+        if (!$this->relations->contains($relation)) {
+            $this->relations[] = $relation;
+            $relation->setMappedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Relation $relation): self
+    {
+        if ($this->relations->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getMappedBy() === $this) {
+                $relation->setMappedBy(null);
+            }
+        }
 
         return $this;
     }

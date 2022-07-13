@@ -35,10 +35,14 @@ class Index
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $orderDirection;
 
+    #[ORM\OneToMany(mappedBy: 'view', targetEntity: Relation::class, orphanRemoval: true)]
+    private $relations;
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
         $this->indexColumns = new ArrayCollection();
+        $this->relations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,6 +140,36 @@ class Index
     public function setOrderDirection(?string $orderDirection): self
     {
         $this->orderDirection = $orderDirection;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getRelations(): Collection
+    {
+        return $this->relations;
+    }
+
+    public function addRelation(Relation $relation): self
+    {
+        if (!$this->relations->contains($relation)) {
+            $this->relations[] = $relation;
+            $relation->setView($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Relation $relation): self
+    {
+        if ($this->relations->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getView() === $this) {
+                $relation->setView(null);
+            }
+        }
 
         return $this;
     }

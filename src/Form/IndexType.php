@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Repository\IndexColumnRepository;
 use App\Repository\IndexRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class IndexType extends AbstractType
 {
@@ -22,8 +23,14 @@ class IndexType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $view = $this->indexRepository->find($options['data']->getId());
-        $columns = $this->columnsRepository->findBy(['view' => $view]);
+        
+        if(empty($options['data']->getId())){
+            $columns = new ArrayCollection();
+        } else {
+            $view = $this->indexRepository->find($options['data']->getId());
+            $columns = $this->columnsRepository->findBy(['view' => $view]);
+        }
+
         $builder
             ->add('name')
             ->add('pagination')

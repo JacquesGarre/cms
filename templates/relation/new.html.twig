@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Relation{% endblock %}
+
+{% block body %}
+    <h1>Create new Relation</h1>
+
+    {{ include('relation/_form.html.twig') }}
+
+    <a href="{{ path('app_form_edit', {'id': model.id}) }}">back to list</a>
+{% endblock %}

@@ -23,6 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormFactoryInterface;
+use App\Repository\RelationRepository;
 
 #[Route('/entity')]
 class EntityController extends AbstractController
@@ -35,12 +36,21 @@ class EntityController extends AbstractController
         int $id, 
         IndexRepository $indexRepository, 
         int $view_id,
-        FormFactoryInterface $formFactory): Response
+        FormFactoryInterface $formFactory,
+        RelationRepository $relationRepository,
+        $relation_id = false,
+        $parent_id = false
+    ): Response
     {
-
         $filters = [];
         if(!empty($request->request->all()['filters'])){
             $filters = array_filter($request->request->all()['filters']);
+        }
+
+        $relation = false;
+        if(!empty($relation_id) && !empty($parent_id)){
+            $relation = $relationRepository->find($relation_id);
+            $filters[$relation->getMappedBy()->getName()] = $parent_id;
         }
 
         $page = !empty($request->query->get('page')) ? $request->query->get('page') : 1;
@@ -104,7 +114,8 @@ class EntityController extends AbstractController
 
         $resetForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory, true);
 
-        return $this->render('entity/index.html.twig', [
+        $template = !empty($relation) ? 'entity/view.html.twig' : 'entity/index.html.twig';
+        return $this->render($template, [
             'entities' => $entities,
             'model' => $model,
             'view' => $view,
@@ -243,7 +254,9 @@ class EntityController extends AbstractController
         IndexRepository $indexRepository, 
         int $view_id,
         AttributeRepository $attributeRepository,
-        OptionRepository $optionRepository): Response
+        OptionRepository $optionRepository,
+        RelationRepository $relationRepository
+    ): Response
     {
         $model = $formRepository->find($form_id);
         $view = $indexRepository->find($view_id);
@@ -292,11 +305,23 @@ class EntityController extends AbstractController
             ], Response::HTTP_SEE_OTHER);
         }
 
+        $relations = $relationRepository->findBy(['model' => $model], ['position' => 'ASC']);
+        $subviews = [];
+        foreach($relations as $relation){
+            $subviews[] = [
+                'name' => $relation->getView()->getName(),
+                'view_id' => $relation->getView()->getId(),
+                'relation_id' => $relation->getId()
+            ];
+        }
+
+
         return $this->renderForm('entity/edit.html.twig', [
             'entity' => $entity,
             'form' => $form,
             'model' => $model,
-            'view' => $view
+            'view' => $view,
+            'subviews' => $subviews
         ]);
     }
 

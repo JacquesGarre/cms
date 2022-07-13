@@ -4,10 +4,10 @@
 
     {% for index in indices %}
         <h4>{{ index.name }}</h4>
-        <a href="{{ path('app_index_edit', {'id': index.id, 'form_id':model.id}) }}">edit</a>
+        <a href="{{ path('app_index_edit', {'id': index.id, 'form_id':model.id}) }}">Edit</a>
+        <a href="{{ path('app_index_column_new', {'model_id': model.id,'index_id': index.id}) }}">Create new column</a>
         {{ include('index/_delete_form.html.twig') }}
         {{ include('index_column/index.html.twig') }}
-        <hr>
     {% else %}
         <p>No records found</p>
     {% endfor %}

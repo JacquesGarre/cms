@@ -31,12 +31,16 @@ class Form
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $displayPattern;
 
+    #[ORM\OneToMany(mappedBy: 'model', targetEntity: Relation::class)]
+    private $relations;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
         $this->attributes = new ArrayCollection();
         $this->indices = new ArrayCollection();
         $this->entities = new ArrayCollection();
+        $this->relations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -158,6 +162,36 @@ class Form
     public function setDisplayPattern(?string $displayPattern): self
     {
         $this->displayPattern = $displayPattern;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getRelations(): Collection
+    {
+        return $this->relations;
+    }
+
+    public function addRelation(Relation $relation): self
+    {
+        if (!$this->relations->contains($relation)) {
+            $this->relations[] = $relation;
+            $relation->setModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Relation $relation): self
+    {
+        if ($this->relations->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getModel() === $this) {
+                $relation->setModel(null);
+            }
+        }
 
         return $this;
     }

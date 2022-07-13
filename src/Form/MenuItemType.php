@@ -19,7 +19,6 @@ class MenuItemType extends AbstractType
             ->add('model')
             ->add('route', ChoiceType::class, [
                 'choices' => [
-                    "" => "",
                     "index" => "index",
                     "new" => "new"
                 ]

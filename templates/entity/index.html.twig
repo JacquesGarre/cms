@@ -5,11 +5,42 @@
 {% block body %}
     <h1>{{ view.name }} ({{total}})</h1>
 
+    <h3>Filters</h3>
+    {{ form_start(filterForm) }}
+        {{ form_widget(filterForm) }}
+        <button class="btn">{{ button_label|default('Filter') }}</button>
+    {{ form_end(filterForm) }}
+    {{ form_start(resetForm) }}
+        {{ form_widget(resetForm) }}
+        <button class="btn">{{ button_label|default('Reset') }}</button>
+    {{ form_end(resetForm) }}
+
+    <hr>
+
     <table class="table">
         <thead>
             <tr>
                 {% for col in view.indexColumns %}
-                    <th>{{ col.name is not empty ? col.name : col.field.label }}</th>
+
+                    <th>
+
+                        <a href="?order={{ col.field.name }}&direction={{ order.direction == 'ASC' ? 'DESC' : 'ASC' }}">
+
+                            {% if order.order == col.field.name  %}
+                                {% if order.direction == 'ASC' %}
+                                    <i>(A -> Z)</i>
+                                {% elseif order.direction == 'DESC' %}
+                                    <i>(Z -> A)</i>
+                                {% endif %}
+                            {% endif %}
+
+                            {{ col.name is not empty ? col.name : col.field.label }}
+                        </a>
+                    
+                    </th>
+
+
+
                 {% endfor %}
                 <th>actions</th>
             </tr>            
@@ -95,7 +126,7 @@
         </tbody>
     </table>
 
-    {% if pages is not empty %}
+    {% if pages is not empty and pages > 1 %}
     <ul>
         {% for page in range(1, pages) %}
             <li><a href="?page={{ page }}">{{ page }}</a></li>

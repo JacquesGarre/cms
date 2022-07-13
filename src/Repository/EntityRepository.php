@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\ResultSetMapping;
 use App\Entity\Index;
+use App\Repository\FormRepository;
 
 /**
  * @extends ServiceEntityRepository<Entity>
@@ -19,9 +20,10 @@ use App\Entity\Index;
  */
 class EntityRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, FormRepository $formRepository)
     {
         parent::__construct($registry, Entity::class);
+        $this->formRepository = $formRepository;
     }
 
     public function add(Entity $entity, bool $flush = false): void
@@ -42,10 +44,45 @@ class EntityRepository extends ServiceEntityRepository
         }
     }
 
-    public function getDefaultOrderBy($view)
+    // public function getDefaultOrderBy($view)
+    // {
+    //     $orderBy = !empty($view->getOrderBy()) ? ' ORDER BY '.$view->getOrderBy()->getField()->getName().' ' : false;
+    //     $ordering = !empty($view->getOrderDirection()) ? $view->getOrderDirection() : false;
+    //     if(!empty($orderBy)){
+    //         $orderBy .= $ordering ? $ordering : 'ASC';
+    //     }
+    //     return !empty($orderBy) ? $orderBy : '';
+    // }
+
+    public function getCountByView($view, $filters)
     {
-        $orderBy = !empty($view->getOrderBy()) ? ' ORDER BY '.$view->getOrderBy()->getField()->getName().' ' : false;
-        $ordering = !empty($view->getOrderDirection()) ? $view->getOrderDirection() : false;
+        // conditions
+        $model = $view->getModel();
+        $modelID = $model->getId();
+        $columns = $view->getIndexColumns();
+        $modelFields = $model->getAttributes();
+
+        // Query
+        $rsm = new ResultSetMapping;
+        $rsm->addEntityResult('\App\Entity\Entity', 'e');
+        $rsm->addFieldResult('e', 'TOTAL', 'id');
+               
+        $sql = "SELECT COUNT(e.`id`) AS TOTAL
+            FROM `entity` e 
+            LEFT JOIN (".$this->getMetadataJoinQuery($modelFields).") em 
+            ON e.`id` = em.`entity_id` 
+            WHERE e.`model_id` = ? ".$this->getFilters($filters, $modelFields).";";
+        $query = $this->_em->createNativeQuery($sql, $rsm);
+        $query->setParameter(1, $modelID);
+        $results = $query->getResult();
+        $result = reset($results);
+        return $result->getId();
+    }
+
+    public function getOrderBy($order)
+    {
+        $orderBy = !empty($order['order']) ? ' ORDER BY '.$order['order'].' ' : false;
+        $ordering = !empty($order['direction']) ? $order['direction'] : false;
         if(!empty($orderBy)){
             $orderBy .= $ordering ? $ordering : 'ASC';
         }
@@ -53,11 +90,12 @@ class EntityRepository extends ServiceEntityRepository
     }
 
 
-    public function findByView(Index $view, int $currentPage = 1)
-    {   
-        // Default order of view
-        $orderBy = $this->getDefaultOrderBy($view);
 
+    public function findByView(Index $view, int $currentPage = 1, $order = false, $filters = [])
+    {       
+        // Default order of view
+        $orderBy = $this->getOrderBy($order);
+        
         // limit 
         $limit = !empty($view->getPagination()) ? $view->getPagination() : false;
 
@@ -76,8 +114,7 @@ class EntityRepository extends ServiceEntityRepository
         $rsm = new ResultSetMapping;
         $rsm->addEntityResult('\App\Entity\Entity', 'e');
         $rsm->addFieldResult('e', 'id', 'id');
-        $sql = $this->getQuery($view, $orderBy, $limit, $offset);
-        //dd($sql);
+        $sql = $this->getQuery($view, $orderBy, $limit, $offset, $filters);
         $query = $this->_em->createNativeQuery($sql, $rsm);
         $query->setParameter(1, $modelID);
         $entities = $query->getResult();
@@ -85,104 +122,121 @@ class EntityRepository extends ServiceEntityRepository
         return $entities;
     }
 
+    public function getFilters($filters, $modelFields)
+    {
+        if(empty($filters)){
+            return '';
+        }
+        $cond = "";
+        foreach($modelFields as $field){
+            if(array_key_exists($field->getName(), $filters)){
+                $value = $filters[$field->getName()];
+                switch($field->getType()){
+                    case 'text':
+                    case 'textarea':
+                        $cond .= " AND ".$field->getName()." LIKE '%".$value."%'";
+                    break;
+                    break;
+                    case 'select':
+                        $cond .= " AND ".$field->getName()." = ".$value;
+                    break;
+                }
+            }
+        }
+        return $cond;
+    }
 
-    public function getQuery(Index $view, $orderBy, $limit, $offset)
+
+    public function getQuery(Index $view, $orderBy, $limit, $offset, $filters)
     {   
+        $model = $view->getModel();
         $columns = $view->getIndexColumns();
-        $modelFields = $view->getModel()->getAttributes();
+        $modelFields = $model->getAttributes();
                
         return "SELECT e.`id`, ".$this->getMetadataColumns($columns, $view)." 
             FROM `entity` e 
             LEFT JOIN (".$this->getMetadataJoinQuery($modelFields).") em 
             ON e.`id` = em.`entity_id` 
-            WHERE e.`model_id` = ? ".$orderBy." ".$limit." ".$offset.";";
+            WHERE e.`model_id` = ? ".$this->getFilters($filters, $modelFields)." ".$orderBy." ".$limit." ".$offset.";";
+
+    }
+
+    public function isExternalField($column, $view)
+    {
+        return $column->getField()->getForm()->getId() !== $view->getModel()->getId();
+    }
+
+    public function getRelationalField($column, $view)
+    {
+        $modelID = $column->getField()->getForm()->getId();   
+        $relationalField = $view->getModel()->getAttributes()->filter(function($attribute) use ($modelID) {
+            return $attribute->getSelectEntity() == $modelID;
+        })->first();
+        return $relationalField;
+    }
+
+    public function getConcatQueryForExternalField($column, $relationalField)
+    {
+        $model = $this->formRepository->find($column->getField()->getSelectEntity());
+        $pattern = $model->getDisplayPattern();
+        
+        $concat = [];
+        foreach($model->getAttributes() as $attribute){
+            $sql = "( 
+                SELECT `entity_meta`.`value` 
+                FROM `entity_meta` 
+                WHERE `entity_meta`.`name` = '".$attribute->getName()."' 
+                AND `entity_meta`.`entity_id` = (
+                    SELECT `entity_meta`.`value` 
+                    FROM `entity_meta` 
+                    WHERE `entity_meta`.`name` = '".$column->getField()->getName()."' 
+                    AND `entity_meta`.`entity_id` = em.".$relationalField->getName()." 
+                )
+            )";
+            $pattern = str_replace(
+                $attribute->getName(), 
+                "$$".$sql."$$", 
+                $pattern
+            );
+        }
+        $concat = implode("%%%", array_filter(explode('$$', $pattern)));
+        $concat = preg_replace("/%%%(.*)%%%/",',"${1}",', $concat);
+
+        $concat = "(SELECT CONCAT(".$concat.")) AS ".$column->getField()->getName();
+        return $concat;
 
     }
 
     public function getMetadataColumns($columns, $view)
     {   
-        
         $cols = [];
         foreach($columns as $column){
-
-            // Basé sur un champ externe direct (1 relation)
-            if($column->getField()->getForm()->getId() !== $view->getModel()->getId()){
-
-                $modelID = $column->getField()->getForm()->getId();
-                $relationalField = $view->getModel()->getAttributes()->filter(function($attribute) use ($modelID) {
-                    return $attribute->getSelectEntity() == $modelID;
-                })->first();
-
-
-                $attributes = $column->getField()->getForm()->getAttributes();
-                $pattern = $column->getField()->getForm()->getDisplayPattern();
-                $field = "";
-                foreach($attributes as $attribute){
-                    if(strpos($pattern, $attribute->getName()) !== FALSE){
-                        $field = $attribute->getName();
-                        break;
-                    }
+            // Basé sur un champ externe
+            if($this->isExternalField($column, $view)){
+                $relationalField = $this->getRelationalField($column, $view);
+                //  direct (1 relation)
+                if(empty($column->getField()->getSelectEntity())){    
+                    $cols[] = "(
+                        SELECT `entity_meta`.`value` 
+                        FROM `entity_meta` 
+                        WHERE `entity_meta`.`name` = '".$column->getField()->getName()."' 
+                        AND `entity_meta`.`entity_id` = em.".$relationalField->getName()."
+                    ) AS ".$column->getField()->getName();
+                //  indirect (2+ relation)
+                } else {
+                    $cols[] = $this->getConcatQueryForExternalField($column, $relationalField);
                 }
-
-                $cols[] = "(
-                    SELECT `entity_meta`.`value` 
-                    FROM `entity_meta` 
-                    WHERE `entity_meta`.`name` = '".$column->getField()->getName()."' 
-                    AND `entity_meta`.`entity_id` = em.".$relationalField->getName()."
-                ) AS ".$column->getField()->getName();
-
             } else {
-
                 // Basé sur un champ classique 
                 if($column->getField()->getType() !== 'select'){
-
                     $cols[] = "em.".$column->getField()->getName();
-                
                 // Basé sur un select > option
                 } else if(empty($column->getField()->getSelectEntity()) || $column->getField()->getSelectEntity() == 'option'){ 
-
                     $cols[] = "(SELECT `option`.`text` FROM `option` WHERE `option`.`id` = em.`".$column->getField()->getName()."`) AS ".$column->getField()->getName()."";
-
                 }
-
-
             }
 
-
-
         }
-
-
-
-        // Nom	  Type	   Age	   Prénom du proprio	 Nom du proprio	      Ville du proprio
-
-        // $query = "em.name,   -- Basé sur un champ classique 
-        //     (SELECT `option`.`text` FROM `option` WHERE `option`.`id` = em.`type`) AS type, -- Basé sur un select > option
-        //     em.age,   -- Basé sur un champ classique 
-        //     (
-        //         SELECT `entity_meta`.`value` 
-        //         FROM `entity_meta` 
-        //         WHERE `entity_meta`.`name` = 'firstname' 
-        //         AND `entity_meta`.`entity_id` = em.owner 
-        //     ) AS firstname,   -- Basé sur un select > entity
-        //     (
-        //         SELECT `entity_meta`.`value` 
-        //         FROM `entity_meta` 
-        //         WHERE `entity_meta`.`name` = 'lastname' 
-        //         AND `entity_meta`.`entity_id` = em.owner 
-        //     ) AS lastname,   -- Basé sur un select > entity
-        //     (
-        //         SELECT `entity_meta`.`value` 
-        //         FROM `entity_meta` 
-        //         WHERE `entity_meta`.`name` = 'name' 
-        //         AND `entity_meta`.`entity_id` = (
-        //             SELECT `entity_meta`.`value` 
-        //             FROM `entity_meta` 
-        //             WHERE `entity_meta`.`name` = 'city' 
-        //             AND `entity_meta`.`entity_id` = em.owner 
-        //         )
-        //     ) AS city -- Basé sur un champ externe";
-
         return implode(', ', $cols);
     }
 

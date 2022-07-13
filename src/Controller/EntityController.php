@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Entity;
+use App\Entity\Option;
 use App\Entity\EntityMeta;
 use App\Form\EntityFormType;
 use App\Repository\AttributeRepository;
@@ -15,24 +16,68 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormFactoryInterface;
 
 #[Route('/entity')]
 class EntityController extends AbstractController
 {
-    #[Route('/{id}/{view_id}', name: 'app_entity_index', methods: ['GET'])]
-    public function index(Request $request, EntityRepository $entityRepository, FormRepository $formRepository, int $id, IndexRepository $indexRepository, int $view_id): Response
+    #[Route('/{id}/{view_id}', name: 'app_entity_index', methods: ['GET', 'POST'])]
+    public function index(
+        Request $request, 
+        EntityRepository $entityRepository, 
+        FormRepository $formRepository, 
+        int $id, 
+        IndexRepository $indexRepository, 
+        int $view_id,
+        FormFactoryInterface $formFactory): Response
     {
-        $currentPage = !empty($request->query->get('page')) ? $request->query->get('page') : 1;
+
+        $filters = [];
+        if(!empty($request->request->all()['filters'])){
+            $filters = array_filter($request->request->all()['filters']);
+        }
+
+        $page = !empty($request->query->get('page')) ? $request->query->get('page') : 1;
         $model = $formRepository->find($id);
         $view = $indexRepository->find($view_id);
 
         $limit = !empty($view->getPagination()) ? $view->getPagination() : null;
-        $offset = $limit ? ($currentPage-1) * $limit : 0 ;
-        $allEntities = $entityRepository->findBy(['model' => $model]);
-        $pages = $limit ? ceil(count($allEntities)/$limit) : false;
+        $offset = $limit ? ($page-1) * $limit : 0;
+        //$count = $entityRepository->findBy(['model' => $model]);
 
-        // Query data for this view
-        $entities = $entityRepository->findByView($view, $currentPage);
+        $count = $entityRepository->getCountByView($view, $filters);
+        $pages = $limit ? ceil($count/$limit) : false;
+
+        // current order by
+        $orderBy = false;
+        if(!empty($request->query->get('order'))){
+            $orderBy = $request->query->get('order');
+        } elseif(!empty($view->getOrderBy())) {
+            $orderBy = $view->getOrderBy()->getField()->getName();
+        }
+
+        // current order direction
+        $orderDirection = false;
+        if(!empty($request->query->get('direction'))){
+            $orderDirection = $request->query->get('direction');
+        } elseif(!empty($view->getOrderDirection())) {
+            $orderDirection = $view->getOrderDirection();
+        }
+
+        // current order
+        $order = [
+            'order' => $orderBy,
+            'direction' => $orderDirection ?? 'ASC'
+        ];
+
+        // Query data for this particular view
+        $entities = $entityRepository->findByView($view, $page, $order, $filters);
 
         $patterns = [];
         $externalEntities = [];
@@ -54,6 +99,11 @@ class EntityController extends AbstractController
             $externalEntities[$column->getField()->getForm()->getId()] = $entityRepository->findBy(['model' => $column->getField()->getForm()]);
         }
 
+        $filterForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory);
+        $filterForm->handleRequest($request);
+
+        $resetForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory, true);
+
         return $this->render('entity/index.html.twig', [
             'entities' => $entities,
             'model' => $model,
@@ -61,9 +111,74 @@ class EntityController extends AbstractController
             'patterns' => $patterns,
             'externalEntities' => $externalEntities,
             'pages' => $pages,
-            'total' => count($allEntities)
+            'total' => $count,
+            'order' => $order,
+            'filterForm' => $filterForm->createView(),
+            'resetForm' => $resetForm->createView(),
         ]);
     }
+
+    private function getFilterForm(EntityRepository $entityRepository, FormRepository $formRepository, $model, FormFactoryInterface $formFactory, $reset = false)
+    {
+        $entity = new Entity();
+        $entity->setModel($model);
+
+        $filterForm = $formFactory->createNamed('filters', EntityFormType::class, $entity, [
+            'csrf_protection' => false
+        ]);
+
+        $fields = $model->getAttributes();
+        foreach($fields as $field){
+            $options = [
+                'mapped' => false,
+                'label' => $field->getLabel(),
+                'required' => false
+            ];
+            if(!$reset){
+                switch($field->getType()){
+                    case 'textarea':
+                    case 'text':
+                        $class = TextType::class;
+                    break;
+                    case 'select':
+                        $class = EntityType::class;
+    
+                        if($field->getSelectEntity() == 'option' || empty($field->getSelectEntity())){
+                            $options['class'] = Option::class;
+                            $options['choices'] = $field->getOptions();
+                            $options['choice_label'] = 'text';
+                            $options['choice_value'] = function (?Option $entity) {
+                                return $entity ? $entity->getId() : '';
+                            };
+                        } else {
+    
+                            $model = $formRepository->find($field->getSelectEntity());
+                            $entities = $entityRepository->findBy(['model' => $model]);
+                            $class = ChoiceType::class;
+                            $options['choices'] = ['' => ''];
+                            foreach($entities as $index => $entity)
+                            {
+                                $pattern = $model->getDisplayPattern();
+                                foreach($entity->getEntityMetas() as $meta)
+                                {
+                                    $pattern = str_replace($meta->getName(), $meta->getValue(), $pattern);
+                                }
+                                $options['choices'][$pattern] = $entity->getId();
+                            }
+                        }
+    
+                    break;
+                }
+            } else {
+                $class = HiddenType::class;
+            }
+
+            $filterForm->add($field->getName(), $class, $options);
+        }
+
+        return $filterForm;
+    }
+
 
     #[Route('/{id}/{view_id}/new', name: 'app_entity_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityRepository $entityRepository, EntityMetaRepository $entityMetaRepository, FormRepository $formRepository, int $id, IndexRepository $indexRepository, int $view_id): Response

@@ -109,10 +109,16 @@ class EntityController extends AbstractController
             $externalEntities[$column->getField()->getForm()->getId()] = $entityRepository->findBy(['model' => $column->getField()->getForm()]);
         }
 
-        $filterForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory);
-        $filterForm->handleRequest($request);
+        if(!$relation){
+            $filterForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory);
+            $filterForm->handleRequest($request);
+            $resetForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory, true);
+        } else {
+            $filterForm = $this->getFilterForm($entityRepository, $formRepository, $relation->getView()->getModel(), $formFactory);
+            $filterForm->handleRequest($request);
+            $resetForm = $this->getFilterForm($entityRepository, $formRepository, $relation->getView()->getModel(), $formFactory, true);
+        }
 
-        $resetForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory, true);
 
         $template = !empty($relation) ? 'entity/view.html.twig' : 'entity/index.html.twig';
         return $this->render($template, [

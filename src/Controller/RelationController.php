@@ -74,7 +74,7 @@ class RelationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $relationRepository->add($relation, true);
 
-            return $this->redirectToRoute('app_relation_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('relation/edit.html.twig', [

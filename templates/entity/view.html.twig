@@ -13,28 +13,26 @@
 <table class="table">
     <thead>
         <tr>
+
             {% for col in view.indexColumns %}
-
                 <th>
-
-                    <a href="?order={{ col.field.name }}&direction={{ order.direction == 'ASC' ? 'DESC' : 'ASC' }}">
-
-                        {% if order.order == col.field.name  %}
-                            {% if order.direction == 'ASC' %}
-                                <i>(A -> Z)</i>
-                            {% elseif order.direction == 'DESC' %}
-                                <i>(Z -> A)</i>
+                    <form method="post" id="{{ col.field.name }}_{{model.id}}">
+                        <input type="hidden" value="{{ col.field.name }}" name="order_{{model.id}}">
+                        <input type="hidden" value="{{ order.direction == 'ASC' ? 'DESC' : 'ASC' }}" name="direction_{{model.id}}">
+                        <a href="javascript:{}" onclick="document.getElementById('{{ col.field.name }}_{{model.id}}').submit();">
+                            {% if order.order == col.field.name  %}
+                                {% if order.direction == 'ASC' %}
+                                    <i>(A -> Z)</i>
+                                {% elseif order.direction == 'DESC' %}
+                                    <i>(Z -> A)</i>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-
-                        {{ col.name is not empty ? col.name : col.field.label }}
-                    </a>
-                
+                            {{ col.name is not empty ? col.name : col.field.label }}
+                        </a>
+                    </form>               
                 </th>
-
-
-
             {% endfor %}
+
             <th>actions</th>
         </tr>            
     </thead>
@@ -123,10 +121,11 @@
     </tbody>
 </table>
 {% if pages is not empty and pages > 1 %}
-<ul>
     {% for page in range(1, pages) %}
-        <li><a href="?page={{ page }}">{{ page }}</a></li>
+            <form method="post" id="pagination_{{ page }}_{{model.id}}">
+                <input type="hidden" value="{{ page }}" name="page_{{model.id}}">
+                <a href="javascript:{}" onclick="document.getElementById('pagination_{{ page }}_{{model.id}}').submit();">{{ page }}</a>
+            </form>
     {% endfor %}
-</ul>
 {% endif %}
 <a href="{{ path('app_entity_new', {'id':model.id, 'view_id': view.id}) }}">Create new</a>

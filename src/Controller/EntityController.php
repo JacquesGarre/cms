@@ -38,57 +38,48 @@ class EntityController extends AbstractController
         int $view_id,
         FormFactoryInterface $formFactory,
         RelationRepository $relationRepository,
-        $relation_id = false,
-        $parent_id = false
+        $relation_id = '',
+        $parent_id = ''
     ): Response
     {
-        $filters = [];
-        if(!empty($request->request->all()['filters'])){
-            $filters = array_filter($request->request->all()['filters']);
-        }
 
-        $relation = false;
-        if(!empty($relation_id) && !empty($parent_id)){
-            $relation = $relationRepository->find($relation_id);
-            $filters[$relation->getMappedBy()->getName()] = $parent_id;
-        }
-
-        $page = !empty($request->query->get('page')) ? $request->query->get('page') : 1;
+        $session = $request->getSession();
         $model = $formRepository->find($id);
+
         $view = $indexRepository->find($view_id);
-
         $limit = !empty($view->getPagination()) ? $view->getPagination() : null;
-        $offset = $limit ? ($page-1) * $limit : 0;
-        //$count = $entityRepository->findBy(['model' => $model]);
 
-        $count = $entityRepository->getCountByView($view, $filters);
-        $pages = $limit ? ceil($count/$limit) : false;
-
-        // current order by
-        $orderBy = false;
-        if(!empty($request->query->get('order'))){
-            $orderBy = $request->query->get('order');
-        } elseif(!empty($view->getOrderBy())) {
-            $orderBy = $view->getOrderBy()->getField()->getName();
-        }
-
-        // current order direction
-        $orderDirection = false;
-        if(!empty($request->query->get('direction'))){
-            $orderDirection = $request->query->get('direction');
-        } elseif(!empty($view->getOrderDirection())) {
-            $orderDirection = $view->getOrderDirection();
-        }
-
-        // current order
+        $page = $this->getCurrentPage($request, $model, $session, $relation_id);
+        $orderBy = $this->getCurrentOrderBy($request, $model, $session, $view, $relation_id);
+        $orderDirection = $this->getCurrentOrderDirection($request, $model, $session, $view, $relation_id);
+        
+        
         $order = [
             'order' => $orderBy,
             'direction' => $orderDirection ?? 'ASC'
         ];
 
+        $filters = [];
+        if(!empty($request->request->all()['filters_'.$model->getId()])){
+            $filters = array_filter($request->request->all()['filters_'.$model->getId()]);
+            $page = 1;
+            $session->set('page_'.$model->getId(), $page);
+        } elseif(!empty($session->get($relation_id.'filters_'.$model->getId()))) {
+            $filters = array_filter($session->get($relation_id.'filters_'.$model->getId()));
+        } 
+        $relation = false;
+        if(!empty($relation_id) && !empty($parent_id)){
+            $relation = $relationRepository->find($relation_id);
+            $filters[$relation->getMappedBy()->getName()] = $parent_id;
+        }
+        $session->set($relation_id.'filters_'.$model->getId(), $filters);
+
+        $count = $entityRepository->getCountByView($view, $filters);
+        $pages = $limit ? ceil($count/$limit) : false;
+
         // Query data for this particular view
         $entities = $entityRepository->findByView($view, $page, $order, $filters);
-
+        
         $patterns = [];
         $externalEntities = [];
         foreach($view->getIndexColumns() as $column){   
@@ -111,14 +102,23 @@ class EntityController extends AbstractController
 
         if(!$relation){
             $filterForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory);
+            foreach($filters as $field => $value){
+                if($filterForm->has($field)){
+                    $filterForm->get($field)->setData($value);
+                }
+            }
             $filterForm->handleRequest($request);
             $resetForm = $this->getFilterForm($entityRepository, $formRepository, $model, $formFactory, true);
         } else {
             $filterForm = $this->getFilterForm($entityRepository, $formRepository, $relation->getView()->getModel(), $formFactory);
+            // foreach($filters as $field => $value){
+            //     if($filterForm->get($field)){
+            //         $filterForm->get($field)->setData($value);
+            //     }
+            // }
             $filterForm->handleRequest($request);
             $resetForm = $this->getFilterForm($entityRepository, $formRepository, $relation->getView()->getModel(), $formFactory, true);
         }
-
 
         $template = !empty($relation) ? 'entity/view.html.twig' : 'entity/index.html.twig';
         return $this->render($template, [
@@ -135,12 +135,55 @@ class EntityController extends AbstractController
         ]);
     }
 
+    private function getCurrentOrderBy($request, $model, $session, $view, $relation_id)
+    {
+        $orderBy = false;
+        if(!empty($request->request->all()['order_'.$model->getId()])){
+            $orderBy = $request->request->all()['order_'.$model->getId()];
+        } elseif(!empty($session->get('order_'.$model->getId()))) {
+            $orderBy = $session->get('order_'.$model->getId());
+        } elseif(!empty($view->getOrderBy())) {
+            $orderBy = $view->getOrderBy()->getField()->getName();
+        }
+        $session->set('order_'.$model->getId(), $orderBy);
+        return $orderBy;
+    }
+
+    private function getCurrentOrderDirection($request, $model, $session, $view, $relation_id)
+    {
+        $orderDirection = false;
+        if(!empty($request->request->all()['direction_'.$model->getId()])){
+            $orderDirection = $request->request->all()['direction_'.$model->getId()];
+        } elseif(!empty($session->get($relation_id.'direction_'.$model->getId()))) {
+            $orderDirection = $session->get($relation_id.'direction_'.$model->getId());
+        } elseif(!empty($view->getOrderDirection())) {
+            $orderDirection = $view->getOrderDirection();
+        }
+        $session->set($relation_id.'direction_'.$model->getId(), $orderDirection);
+        return $orderDirection;
+    }
+
+    private function getCurrentPage($request, $model, $session, $relation_id)
+    {
+        $page = !empty($request->request->all()['page_'.$model->getId()]) 
+        ? $request->request->all()['page_'.$model->getId()] 
+        : (
+            !empty($session->get($relation_id.'page_'.$model->getId())) 
+            ? $session->get($relation_id.'page_'.$model->getId()) 
+            : 1
+        );
+        $session->set($relation_id.'page_'.$model->getId(), $page);
+        return $page;
+    }
+
+
+
     private function getFilterForm(EntityRepository $entityRepository, FormRepository $formRepository, $model, FormFactoryInterface $formFactory, $reset = false)
     {
         $entity = new Entity();
         $entity->setModel($model);
 
-        $filterForm = $formFactory->createNamed('filters', EntityFormType::class, $entity, [
+        $filterForm = $formFactory->createNamed('filters_'.$model->getId(), EntityFormType::class, $entity, [
             'csrf_protection' => false
         ]);
 

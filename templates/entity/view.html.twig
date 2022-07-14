@@ -5,21 +5,21 @@
 <div class="accordion" id="filters-accordion">
     <div class="accordion-item">
         <a class="accordion-header" id="filters">
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filters-collapse" aria-expanded="false" aria-controls="filters-collapse">
-                Search<i class="ms-2 material-icons opacity-10">search</i>
+            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#filters-collapse" aria-expanded="false" aria-controls="filters-collapse">
+                Search<i class="ms-2 fs-6 material-icons opacity-10">search</i>
             </button>
         </a>
-        <div id="filters-collapse" class="accordion-collapse collapse" aria-labelledby="filters" data-bs-parent="#filters-accordion">
+        <div id="filters-collapse" class="accordion-collapse collapse {{ activeFilters ? 'show' : '' }}" aria-labelledby="filters" data-bs-parent="#filters-accordion">
             <div class="accordion-body">
                 {% form_theme filterForm 'twig_forms/fields.html.twig' %}
-                {{ form_start(filterForm) }}
+                {{ form_start(filterForm, {'attr':{'class':'filters-form d-inline'}}) }}
                 {{ form_widget(filterForm) }}
-                <button class="btn btn-success  m-0">{{ button_label|default('Filter') }}</button>
+                <button class="btn btn-success btn-sm m-0">{{ button_label|default('Filter') }}</button>
                 {{ form_end(filterForm) }}
                 {% form_theme resetForm 'twig_forms/fields.html.twig' %}
-                {{ form_start(resetForm) }}
+                {{ form_start(resetForm, {'attr':{'class':'reset-filters-form d-inline-block'}}) }}
                 {{ form_widget(resetForm) }}
-                <button class="btn btn-primary  m-0">{{ button_label|default('Reset') }}</button>
+                <button class="btn btn-primary btn-sm m-0">{{ button_label|default('Reset') }}</button>
                 {{ form_end(resetForm) }}
             </div>
         </div>
@@ -35,13 +35,15 @@
                         <form method="post" id="{{relation_id}}{{ col.field.name }}_{{model.id}}">
                             <input type="hidden" value="{{ col.field.name }}" name="{{relation_id}}order_{{model.id}}">
                             <input type="hidden" value="{{ order.direction == 'ASC' ? 'DESC' : 'ASC' }}" name="{{relation_id}}direction_{{model.id}}">
-                            <a href="javascript:{}" onclick="document.getElementById('{{relation_id}}{{ col.field.name }}_{{model.id}}').submit();">
+                            <a class="align-items-center d-flex" href="javascript:{}" onclick="document.getElementById('{{relation_id}}{{ col.field.name }}_{{model.id}}').submit();">
                                 {% if order.order == col.field.name  %}
-                                {% if order.direction == 'ASC' %}
-                                <i>(A -> Z)</i>
-                                {% elseif order.direction == 'DESC' %}
-                                <i>(Z -> A)</i>
-                                {% endif %}
+                                    <i class="pb-1 me-2 fs-6 material-icons opacity-10">
+                                        {% if order.direction == 'ASC' %}
+                                            expand_more
+                                        {% elseif order.direction == 'DESC' %}
+                                            expand_less
+                                        {% endif %}
+                                    </i>
                                 {% endif %}
                                 {{ col.name is not empty ? col.name : col.field.label }}
                             </a>
@@ -142,12 +144,19 @@
     </table>
 </div>
 {% if pages is not empty and pages > 1 %}
-    {% for page in range(1, pages) %}
-    <form method="post" id="pagination_{{relation_id}}{{ page }}_{{model.id}}">
-        <input type="hidden" value="{{ page }}" name="{{relation_id}}page_{{model.id}}">
-        <a href="javascript:{}" onclick="document.getElementById('pagination_{{relation_id}}{{ page }}_{{model.id}}').submit();">{{ page }}</a>
-    </form>
-    {% endfor %}
+    <div class="pagination justify-content-center mt-5">
+        {% for page in range(1, pages) %}
+        <form method="post" id="pagination_{{relation_id}}{{ page }}_{{model.id}}" class="d-inline">
+            <input type="hidden" value="{{ page }}" name="{{relation_id}}page_{{model.id}}">
+            <a 
+                class="btn btn-{{ currentPage == page ? '' : 'outline-'}}primary btn-sm mx-1 " 
+                href="javascript:{}" 
+                onclick="document.getElementById('pagination_{{relation_id}}{{ page }}_{{model.id}}').submit();"
+                
+            >{{ page }}</a>
+        </form>
+        {% endfor %}
+    </div>
 {% endif %}
 
 

@@ -57,6 +57,7 @@ class EntityController extends AbstractController
         ];
 
         $filters = [];
+        $activeFilters = false;
         if($relation_id){
             $relation = $relationRepository->find($relation_id);
             $filters[$relation->getMappedBy()->getName()] = $parent_id;
@@ -65,11 +66,12 @@ class EntityController extends AbstractController
             $key = $relation_id.'filters_'.$model->getId();
         }        
         if(!empty($_POST[$key])){
-            $filters = array_filter($_POST[$key]);
+            $activeFilters = true;
+            $filters = array_merge($filters, array_filter($_POST[$key]));
             $page = 1;
             $session->set($relation_id.'page_'.$model->getId(), $page);
         } elseif(!empty($session->get($key))) {
-            $filters = array_filter($session->get($key));
+            $filters = array_merge($filters, array_filter($session->get($key)));
         } 
         $session->set($key, $filters);
 
@@ -135,8 +137,10 @@ class EntityController extends AbstractController
             'patterns' => $patterns,
             'externalEntities' => $externalEntities,
             'pages' => $pages,
+            'currentPage' => $page,
             'total' => $count,
             'order' => $order,
+            'activeFilters' => $activeFilters,
             'filterForm' => $filterForm->createView(),
             'resetForm' => $resetForm->createView(),
             'relation_id' => $relation_id
@@ -207,12 +211,18 @@ class EntityController extends AbstractController
         ]);
 
         $fields = $model->getAttributes();
+
+        $colClass = ceil(12 / count($fields));
+
         foreach($fields as $field){
 
             $options = [
                 'mapped' => false,
                 'label' => $field->getLabel(),
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'class' => 'col-md-'.$colClass
+                ]
             ];
             if(!$reset){
                 switch($field->getType()){
@@ -412,6 +422,7 @@ class EntityController extends AbstractController
                 'view_id' => $relation->getView()->getId(),
                 'relation_id' => $relation->getId(),
                 'page' => $page,
+                'currentPage' => $page,
                 'order' => $order
             ];
         }

@@ -1,11 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Entity{% endblock %}
+{% block title %}New {{model.name}}{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Back-office</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_entity_index', {'id': model.id, 'view_id': view.id}) }}">{{view.name}}</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">New {{model.name}}</li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Entity</h1>
-
-    {{ include('entity/_form.html.twig') }}
-
-    <a href="{{ path('app_entity_index', {'id':model.id, 'view_id': view.id}) }}">back to list</a>
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            New {{model.name}}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('entity/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

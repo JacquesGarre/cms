@@ -27634,4 +27634,8 @@ pre[class*="language-"] {
   }
 }
 
+.filters-form select {
+    padding-top: 2px;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */

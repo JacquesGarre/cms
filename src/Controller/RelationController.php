@@ -39,6 +39,8 @@ class RelationController extends AbstractController
 
             $relation->setModel($model);
             $relationRepository->add($relation, true);
+            $session = $request->getSession();
+            $session->clear();
 
             return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()], Response::HTTP_SEE_OTHER);
         }
@@ -73,7 +75,8 @@ class RelationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $relationRepository->add($relation, true);
-
+            $session = $request->getSession();
+            $session->clear();
             return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()], Response::HTTP_SEE_OTHER);
         }
 
@@ -85,12 +88,21 @@ class RelationController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_relation_delete', methods: ['POST'])]
-    public function delete(Request $request, Relation $relation, RelationRepository $relationRepository): Response
-    {
+    public function delete(
+        Request $request, 
+        Relation $relation, 
+        RelationRepository $relationRepository,
+        FormRepository $formRepository, 
+        int $model_id
+    ): Response
+    {   
+        $model = $formRepository->find($model_id);
         if ($this->isCsrfTokenValid('delete'.$relation->getId(), $request->request->get('_token'))) {
+            $session = $request->getSession();
+            $session->clear();
             $relationRepository->remove($relation, true);
         }
+        return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()], Response::HTTP_SEE_OTHER);
 
-        return $this->redirectToRoute('app_relation_index', [], Response::HTTP_SEE_OTHER);
     }
 }

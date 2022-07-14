@@ -73,6 +73,8 @@ class FormController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formRepository->add($model, true);
+            $session = $request->getSession();
+            $session->clear();
 
             return $this->redirectToRoute('app_form_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -91,6 +93,8 @@ class FormController extends AbstractController
     {
 
         if ($this->isCsrfTokenValid('delete'.$form->getId(), $request->request->get('_token'))) {
+            $session = $request->getSession();
+            $session->clear();
             $formRepository->remove($form, true);
         }
 

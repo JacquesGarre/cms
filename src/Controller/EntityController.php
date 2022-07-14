@@ -25,10 +25,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\Repository\RelationRepository;
 
-#[Route('/entity')]
+#[Route('/model')]
 class EntityController extends AbstractController
 {
-    #[Route('/{id}/{view_id}', name: 'app_entity_index', methods: ['GET', 'POST'])]
+    #[Route('/{id}/view/{view_id}', name: 'app_entity_index', methods: ['GET', 'POST'])]
     public function index(
         Request $request, 
         EntityRepository $entityRepository, 
@@ -44,16 +44,13 @@ class EntityController extends AbstractController
     {
 
         $session = $request->getSession();
-        $model = $formRepository->find($id);
 
+        $model = $formRepository->find($id);
         $view = $indexRepository->find($view_id);
         $limit = !empty($view->getPagination()) ? $view->getPagination() : null;
-
         $page = $this->getCurrentPage($request, $model, $session, $relation_id);
         $orderBy = $this->getCurrentOrderBy($request, $model, $session, $view, $relation_id);
         $orderDirection = $this->getCurrentOrderDirection($request, $model, $session, $view, $relation_id);
-        
-        
         $order = [
             'order' => $orderBy,
             'direction' => $orderDirection ?? 'ASC'
@@ -149,14 +146,17 @@ class EntityController extends AbstractController
     private function getCurrentOrderBy($request, $model, $session, $view, $relation_id)
     {
         $orderBy = false;
-        if(!empty($request->request->all()[$relation_id.'order_'.$model->getId()])){
-            $orderBy = $request->request->all()[$relation_id.'order_'.$model->getId()];
-        } elseif(!empty($session->get($relation_id.'order_'.$model->getId()))) {
-            $orderBy = $session->get($relation_id.'order_'.$model->getId());
+        $key = $relation_id.'order_'.$model->getId();
+
+        if(!empty($request->request->all()[$key])){
+            $orderBy = $request->request->all()[$key];
+        } elseif(!empty($session->get($key))) {
+            $orderBy = $session->get($key);
         } elseif(!empty($view->getOrderBy())) {
             $orderBy = $view->getOrderBy()->getField()->getName();
-        }
-        $session->set($relation_id.'order_'.$model->getId(), $orderBy);
+        }      
+        $session->set($key, $orderBy);   
+
         return $orderBy;
     }
 
@@ -277,7 +277,7 @@ class EntityController extends AbstractController
     }
 
 
-    #[Route('/{id}/{view_id}/new', name: 'app_entity_new', methods: ['GET', 'POST'])]
+    #[Route('/{id}/view/{view_id}/new', name: 'app_entity_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityRepository $entityRepository, EntityMetaRepository $entityMetaRepository, FormRepository $formRepository, int $id, IndexRepository $indexRepository, int $view_id): Response
     {
     
@@ -329,7 +329,7 @@ class EntityController extends AbstractController
     //     ]);
     // }
 
-    #[Route('/{form_id}/{view_id}/details/{id}', name: 'app_entity_edit', methods: ['GET', 'POST'])]
+    #[Route('/{form_id}/view/{view_id}/details/{id}', name: 'app_entity_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request, 
         Entity $entity, 
@@ -401,8 +401,8 @@ class EntityController extends AbstractController
         foreach($relations as $relation){
 
             $page = $this->getCurrentPage($request, $relation->getModel(), $session, $relation->getId());
-            $orderBy = $this->getCurrentOrderBy($request, $model, $session, $view, $relation->getId());
-            $orderDirection = $this->getCurrentOrderDirection($request, $model, $session, $view, $relation->getId());
+            $orderBy = $this->getCurrentOrderBy($request, $relation->getModel(), $session, $relation->getView(), $relation->getId());
+            $orderDirection = $this->getCurrentOrderDirection($request, $relation->getModel(), $session, $relation->getView(), $relation->getId());
             $order = [
                 'order' => $orderBy,
                 'direction' => $orderDirection ?? 'ASC'
@@ -426,7 +426,7 @@ class EntityController extends AbstractController
         ]);
     }
 
-    #[Route('/{form_id}/{view_id}/details/{id}/delete', name: 'app_entity_delete', methods: ['POST'])]
+    #[Route('/{form_id}/view/{view_id}/details/{id}/delete', name: 'app_entity_delete', methods: ['POST'])]
     public function delete(Request $request, Entity $entity, EntityRepository $entityRepository, FormRepository $formRepository, int $form_id, IndexRepository $indexRepository, int $view_id): Response
     {
 

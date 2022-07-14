@@ -40,7 +40,8 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             
             $indexRepository->add($index, true);
-
+            $session = $request->getSession();
+            $session->clear();
             return $this->redirectToRoute('app_index_edit', [
                 'form_id' => $model->getId(),
                 'id' => $index->getId()
@@ -72,6 +73,8 @@ class IndexController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $indexRepository->add($index, true);
+            $session = $request->getSession();
+            $session->clear();
 
             return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()],  Response::HTTP_SEE_OTHER);
         }
@@ -90,6 +93,8 @@ class IndexController extends AbstractController
         $model = $formRepository->find($form_id);
         if ($this->isCsrfTokenValid('delete'.$index->getId(), $request->request->get('_token'))) {
             $indexRepository->remove($index, true);
+            $session = $request->getSession();
+            $session->clear();
         }
 
         return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()],  Response::HTTP_SEE_OTHER);

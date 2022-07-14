@@ -1,15 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Index{% endblock %}
+{% block title %}Edit view{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_index') }}">Models</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_edit', {'id': model.id}) }}">{{ model.name }}</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">View {{index.name}}</li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block body %}
-    <h1>Edit {{index.name}}</h1>
-
-    {{ include('index/_form.html.twig', {'button_label': 'Update'}) }}
-    <a href="{{ path('app_form_edit', {'id':model.id} ) }}">back to list</a>
-    {{ include('index/_delete_form.html.twig') }}
-
-    <hr>
-    {{ include('index_column/index.html.twig') }}
-
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            View {{index.name}}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('index/_form.html.twig', {'button_label': 'Update'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

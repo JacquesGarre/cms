@@ -2,9 +2,33 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ view.name }}{% endblock %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Back-office</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{ view.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block body %}
-    
-    {{ include('entity/view.html.twig') }}
-
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                    <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                        {{ view.name }}
+                    </h6>
+                    <a class="btn btn-icon float-end text-white mt-2 me-2" href="{{ path('app_entity_new', {'id':view.model.id, 'view_id': view.id}) }}">
+                        <span class="btn-inner--icon"><i class="material-icons">add</i></span>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {{ include('entity/view.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

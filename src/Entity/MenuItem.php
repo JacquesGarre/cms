@@ -31,6 +31,9 @@ class MenuItem
     #[ORM\ManyToOne(targetEntity: Index::class)]
     private $view;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $materialIcon;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +107,18 @@ class MenuItem
     public function setView(?Index $view): self
     {
         $this->view = $view;
+
+        return $this;
+    }
+
+    public function getMaterialIcon(): ?string
+    {
+        return $this->materialIcon;
+    }
+
+    public function setMaterialIcon(?string $materialIcon): self
+    {
+        $this->materialIcon = $materialIcon;
 
         return $this;
     }

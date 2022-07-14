@@ -1,36 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Entity{% endblock %}
+{% set title = model.getDisplayPattern() %}  
+{% for field in model.attributes %}
+    {% if entity.getEntityMeta(field.name) is not empty %}
+        {% set title = title|replace({ (field.name) : entity.getEntityMeta(field.name).value }) %}  
+    {% endif %}
+{% endfor %}
+
+{% block title %}{{view.name}} | {{title}}{% endblock %}
+
+
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Back-office</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_entity_index', {'id': model.id, 'view_id': view.id}) }}">{{view.name}}</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{title}}</li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block body %}
-    <h1>    
-        {% set pattern = model.getDisplayPattern() %}  
-        {% for field in model.attributes %}
-            {% if entity.getEntityMeta(field.name) is not empty %}
-                {% set pattern = pattern|replace({ (field.name) : entity.getEntityMeta(field.name).value }) %}  
-            {% endif %}
-        {% endfor %}
-        {{ pattern }}
-    </h1>
+<div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            {{title}}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="nav-wrapper position-relative end-0">
+                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#data-tabs-simple" role="tab" aria-controls="data" aria-selected="true">
+                                    Data
+                                </a>
+                            </li>
+                            {% for subview in subviews %}
+                            <li class="nav-item">
+                                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#tab-{{subview.relation_id}}-tabs-simple" role="tab" aria-controls="tab-{{subview.relation_id}}" aria-selected="false">
+                                    {{subview.name}}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-content mt-4">
+                        <div class="tab-pane fade show active" id="data-tabs-simple" role="tabpanel" aria-labelledby="data-tab">
+                            {{ include('entity/_form.html.twig', {'button_label': 'Update'}) }}
+                        </div>
+                        {% for subview in subviews %}
+                            <div class="tab-pane fade" id="tab-{{subview.relation_id}}-tabs-simple" role="tabpanel" aria-labelledby="tab-{{subview.relation_id}}-tab">
+                                {{ 
+                                    render(controller('App\\Controller\\EntityController::index', {
+                                        'id':model.id,
+                                        'view_id':subview.view_id,
+                                        'relation_id':subview.relation_id,
+                                        'parent_id':entity.id,
+                                        'page':subview.page
+                                    })) 
+                                }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {{ include('entity/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_entity_index', {'id': model.id, 'view_id':view.id}) }}">back to list</a>
 
-    {{ include('entity/_delete_form.html.twig') }}
 
-    <hr>
-    {% for subview in subviews %}
-        {{ 
-            render(controller('App\\Controller\\EntityController::index', {
-                'id':model.id,
-                'view_id':subview.view_id,
-                'relation_id':subview.relation_id,
-                'parent_id':entity.id,
-                'page':subview.page
-            })) 
-        }}
-        <hr>
-    {% endfor %}
 
 {% endblock %}

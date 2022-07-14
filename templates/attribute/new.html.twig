@@ -2,10 +2,32 @@
 
 {% block title %}New Attribute{% endblock %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_index') }}">Models</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_edit', {'id': model.id}) }}">{{ model.name }}</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">New attribute</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h1>Create new Attribute</h1>
-
-    {{ include('attribute/_form.html.twig') }}
-
-    <a href="{{ path('app_attribute_index', {'id': model.id}) }}">back to list</a>
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            New attribute for {{ model.name }}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('attribute/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

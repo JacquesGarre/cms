@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\LabelType;
 use App\Repository\FormRepository;
 use App\Repository\AttributeRepository;
+use Symfony\Component\Form\Extension\Core\Type\RangeType;
 
 class AttributeType extends AbstractType
 {
@@ -32,10 +33,14 @@ class AttributeType extends AbstractType
 
         $builder
             ->add('label', LabelType::class)
-            ->add('placeholder')
-            ->add('name')
-            ->add('defaultValue')
+            ->add('name', null, [
+                'attr' => ['class' => 'col-md-6 col-sm-12'],
+            ])
+            ->add('placeholder', null, [
+                'attr' => ['class' => 'col-md-6 col-sm-12'],
+            ])
             ->add('type', ChoiceType::class, [
+                'attr' => ['class' => 'col-md-6 col-sm-12'],
                 'choices' => [
                     "text" => "text",
                     "textarea" => "textarea",
@@ -64,18 +69,37 @@ class AttributeType extends AbstractType
                 ]
             ])
             ->add('selectEntity', ChoiceType::class, [
+                'attr' => ['class' => 'col-md-6 col-sm-12'],
                 'choices' => $selectEntities,
                 'required' => false
             ])
-            ->add('disabled')
-            ->add('required')
-            ->add('checked')
-            ->add('readonly')
-            ->add('multiple')
-            ->add('col')
+            ->add('disabled', null, [
+                'attr' => ['class' => 'col-md-2 col-sm-12']
+            ])
+            ->add('required', null, [
+                'attr' => ['class' => 'col-md-2 col-sm-12']
+            ])
+            ->add('checked', null, [
+                'attr' => ['class' => 'col-md-2 col-sm-12']
+            ])
+            ->add('readonly', null, [
+                'attr' => ['class' => 'col-md-2 col-sm-12']
+            ])
+            ->add('multiple', null, [
+                'attr' => ['class' => 'col-md-2 col-sm-12']
+            ])
+            ->add('col', RangeType::class, [
+                'label' => 'Width',
+                'attr' => [
+                    'min' => 1,
+                    'max' => 12
+                ],
+                'data' => 12
+            ])
             ->add('position')
-            ->add('cols')
-            ->add('height')
+            // ->add('cols')
+            // ->add('height')
+            ->add('defaultValue')
         ;
     }
 

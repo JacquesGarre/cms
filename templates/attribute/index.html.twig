@@ -1,58 +1,103 @@
 
-{% block body %}
 
-    <h3>Attributes</h3>
-    <a href="{{ path('app_attribute_new', {'id': model.id}) }}">Create new</a>
-    
-    <table class="table">
+{% block body %}
+<div class="table-responsive p-0">
+    <table class="table align-items-center justify-content-center mb-0">
         <thead>
             <tr>
-                <th>Label</th>
-                <th>Name</th>
-                <th>Disabled</th>
-                <th>Required</th>
-                <th>Col</th>
-                <th>Position</th>
-                <th>Checked</th>
-                <th>Placeholder</th>
-                <th>Readonly</th>
-                <th>Type</th>
-                <th>DefaultValue</th>
-                <th>Multiple</th>
-                <th>Cols</th>
-                <th>Height</th>
-                <th>actions</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Position</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Label</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Placeholder</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Default value</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Width</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Disabled</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Required</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Checked</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Readonly</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Multiple</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for attribute in attributes %}
+            {% for attribute in attributes %}
             <tr>
-                <td>{{ attribute.label }}</td>
-                <td>{{ attribute.name }}</td>
-                <td>{{ attribute.disabled ? 'Yes' : 'No' }}</td>
-                <td>{{ attribute.required ? 'Yes' : 'No' }}</td>
-                <td>{{ attribute.col }}</td>
-                <td>{{ attribute.position }}</td>
-                <td>{{ attribute.checked ? 'Yes' : 'No' }}</td>
-                <td>{{ attribute.placeholder }}</td>
-                <td>{{ attribute.readonly ? 'Yes' : 'No' }}</td>
-                <td>{{ attribute.type }}</td>
-                <td>{{ attribute.defaultValue }}</td>
-                <td>{{ attribute.multiple ? 'Yes' : 'No' }}</td>
-                <td>{{ attribute.cols }}</td>
-                <td>{{ attribute.height }}</td>
-                <td>
-                    <a href="{{ path('app_attribute_edit', {'id': attribute.id, 'form_id': model.id}) }}">edit</a>
-                    {{ include('attribute/_delete_form.html.twig') }}
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.position }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.label }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.name }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.type }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.placeholder }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.defaultValue }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.col }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.disabled ? 'Yes' : 'No' }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.required ? 'Yes' : 'No' }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.checked ? 'Yes' : 'No' }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.readonly ? 'Yes' : 'No' }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ attribute.multiple ? 'Yes' : 'No' }}
+                    </span>
+                </td>
+                <td class="align-middle text-center">
+                    <a class="text-secondary font-weight-normal text-xs btn w-20 p-0 m-0" data-toggle="tooltip" data-original-title="Edit" href="{{ path('app_attribute_edit', {'id': attribute.id, 'form_id': model.id}) }}">
+                        <i class="material-icons opacity-10">edit</i>
+                    </a>
+                    {{ include('attribute/_delete_form.html.twig', {'button_label': 'Delete'}) }}
                 </td>
             </tr>
-        {% else %}
+            {% else %}
             <tr>
-                <td colspan="15">no records found</td>
+                <td colspan="15">
+                    {{ include('commons/no_records_found.html.twig') }}
+                </td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
-
-    
+</div>
 {% endblock %}

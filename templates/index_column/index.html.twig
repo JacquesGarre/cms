@@ -1,30 +1,47 @@
 {% block body %}
-    <table class="table">
+<div class="table-responsive p-0">
+    <table class="table align-items-center justify-content-center mb-0">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Attribute</th>
-                <th>Position</th>
-                <th>actions</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Position</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Attribute</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for index_column in index.indexColumns %}
+            {% for index_column in index.indexColumns %}
             <tr>
-                <td>{{ index_column.name is not empty ? index_column.name : index_column.field  }}</td>
-                <td>{{ index_column.field }}</td>
-                <td>{{ index_column.position }}</td>
-                <td>
-                    <a href="{{ path('app_index_column_edit', {'id': index_column.id, 'model_id': model.id,'index_id': index.id}) }}">edit</a>
-                    {{ include('index_column/_delete_form.html.twig') }}
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ index_column.position }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ index_column.name is not empty ? index_column.name : index_column.field  }}
+                    </span>
+                </td>
+                <td class="align-middle">
+                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                        {{ index_column.field }}
+                    </span>
+                </td>
+                <td class="align-middle text-center">
+                    <a class="text-secondary font-weight-normal text-xs btn w-20 p-0 m-0" data-toggle="tooltip" data-original-title="Edit" href="{{ path('app_index_column_edit', {'id': index_column.id, 'model_id': model.id,'index_id': index.id}) }}">
+                        <i class="material-icons opacity-10">edit</i>
+                    </a>
+                    {{ include('index_column/_delete_form.html.twig', {'button_label': 'Delete'}) }}
                 </td>
             </tr>
-        {% else %}
+            {% else %}
             <tr>
-                <td colspan="3">no records found</td>
+                <td colspan="4">
+                    {{ include('commons/no_records_found.html.twig') }}
+                </td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('app_index_column_new', {'model_id': model.id,'index_id': index.id}) }}">Create new column</a>
+</div>
 {% endblock %}

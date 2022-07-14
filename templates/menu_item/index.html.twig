@@ -2,38 +2,82 @@
 
 {% block title %}Menu{% endblock %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Menu</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h1>Menu</h1>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                    <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                        Menu
+                    </h6>
+                    <a class="btn btn-icon float-end text-white mt-2 me-2" href="{{ path('app_menu_item_new') }}">
+                        <span class="btn-inner--icon"><i class="material-icons">add</i></span>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2 pt-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Position</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Icon</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Route</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">View</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu_item in menu_items %}
+                            <tr>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-normal">{{ menu_item.position }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-normal">
+                                        <i class="material-icons opacity-10">{{ menu_item.materialIcon }}</i>
+                                    </span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-normal">{{ menu_item.name }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-normal">{{ menu_item.route }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-normal">{{ menu_item.view }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <a class="text-secondary font-weight-normal text-xs btn w-10 p-0 m-0" data-toggle="tooltip" data-original-title="Edit" href="{{ path('app_menu_item_edit', {'id': menu_item.id}) }}">
+                                        <i class="material-icons opacity-10">edit</i>
+                                    </a>
+                                    {{ include('menu_item/_delete_form.html.twig') }}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6">
+                                    {{ include('commons/no_records_found.html.twig') }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Route</th>
-                <th>View</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for menu_item in menu_items %}
-            <tr>
-                <td>{{ menu_item.name }}</td>
-                <td>{{ menu_item.position }}</td>
-                <td>{{ menu_item.route }}</td>
-                <td>{{ menu_item.view }}</td>
-                <td>
-                    <a href="{{ path('app_menu_item_edit', {'id': menu_item.id}) }}">edit</a>
-                    {{ include('menu_item/_delete_form.html.twig') }}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_menu_item_new') }}">Create new</a>
 {% endblock %}

@@ -33,7 +33,6 @@ class IndexColumnType extends AbstractType
         }
 
         $builder
-            ->add('name')
             ->add('field', EntityType::class, [
                 'class' => Attribute::class,
                 'choice_label' => 'label',
@@ -41,6 +40,9 @@ class IndexColumnType extends AbstractType
                 'group_by' => function(Attribute $attribute, $key, $value) {
                     return $attribute->getForm()->getName();
                 }
+            ])
+            ->add('name', null, [
+                'label' => 'Label (Leave blank to use default field label)'
             ])
             ->add('position')
         ;

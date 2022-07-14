@@ -1,13 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit IndexColumn{% endblock %}
+{% block title %}Edit column{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_index') }}">Models</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_edit', {'id': model.id}) }}">{{ model.name }}</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_edit', {'id': model.id}) }}">View {{index.name}}</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Column {{index_column.name is empty ? index_column.field.label : index_column.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block body %}
-    <h1>Edit IndexColumn</h1>
-
-    {{ include('index_column/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_index_column_index', {'model_id': model.id,'index_id': index.id}) }}">back to list</a>
-
-    {{ include('index_column/_delete_form.html.twig') }}
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                        Column {{index_column.name is empty ? index_column.field.label : index_column.name }}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('index_column/_form.html.twig', {'button_label': 'Update'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

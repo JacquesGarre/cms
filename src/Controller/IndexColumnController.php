@@ -42,9 +42,8 @@ class IndexColumnController extends AbstractController
             $indexColumnRepository->add($indexColumn, true);
             $session = $request->getSession();
             $session->clear();
-            return $this->redirectToRoute('app_index_edit', [
-                'form_id' => $model->getId(),
-                'id' => $index->getId()
+            return $this->redirectToRoute('app_form_edit', [
+                'id' => $model->getId()
             ], Response::HTTP_SEE_OTHER);
         }
 
@@ -76,9 +75,8 @@ class IndexColumnController extends AbstractController
             $indexColumnRepository->add($indexColumn, true);
             $session = $request->getSession();
             $session->clear();
-            return $this->redirectToRoute('app_index_edit', [
-                'form_id' => $model->getId(),
-                'id' => $index->getId()
+            return $this->redirectToRoute('app_form_edit', [
+                'id' => $model->getId()
             ], Response::HTTP_SEE_OTHER);
         }
 

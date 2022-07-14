@@ -2,17 +2,107 @@
 
 {% block title %}Edit model{% endblock %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_index') }}">Models</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{ model.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
 
-    <h1>Model {{ model.name }}</h1>
-    {{ include('form/_form.html.twig', {'button_label': 'Update'}) }}
-    <a href="{{ path('app_form_index') }}">back to list</a>
-    {{ include('form/_delete_form.html.twig') }}
-    <hr>
-    {{ include('attribute/index.html.twig') }}
-    <hr>
-    {{ include('index/index.html.twig') }}
-    <hr>
-    {{ include('relation/index.html.twig') }}
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            {{ model.name }}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('form/_form.html.twig', {'button_label': 'Update'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-wrapper position-relative end-0">
+        <ul class="nav nav-pills nav-fill p-1" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#attributes-tabs-simple" role="tab" aria-controls="attributes" aria-selected="true">
+                    Attributes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#views-tabs-simple" role="tab" aria-controls="views" aria-selected="false">
+                    Views
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#relations-tabs-simple" role="tab" aria-controls="relations" aria-selected="false">
+                    Relations
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content mt-5">
+        <div class="tab-pane fade show active" id="attributes-tabs-simple" role="tabpanel" aria-labelledby="attributes-tab">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            Attributes
+                        </h6>
+                        <a class="btn btn-icon float-end text-white mt-2 me-2" href="{{ path('app_attribute_new', {'id': model.id}) }}">
+                            <span class="btn-inner--icon"><i class="material-icons">add</i></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('attribute/index.html.twig') }}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="views-tabs-simple" role="tabpanel" aria-labelledby="views-tab">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            Views
+                        </h6>
+                        <a class="btn btn-icon float-end text-white mt-2 me-2" href="{{ path('app_index_new', {'id':model.id}) }}">
+                            <span class="btn-inner--icon"><i class="material-icons">add</i></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('index/index.html.twig') }}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="relations-tabs-simple" role="tabpanel" aria-labelledby="relations-tabs-simple-tab">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            Relations
+                        </h6>
+                        <a class="btn btn-icon float-end text-white mt-2 me-2" href="{{ path('app_relation_new', {'model_id': model.id}) }}">
+                            <span class="btn-inner--icon"><i class="material-icons">add</i></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('relation/index.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+
     
 {% endblock %}

@@ -12,8 +12,12 @@ class FormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('displayPattern')
+            ->add('name', null, [
+                'attr' => ['class' => 'col-md-6 col-sm-12'],
+            ])
+            ->add('displayPattern', null, [
+                'attr' => ['class' => 'col-md-6 col-sm-12'],
+            ])
         ;
     }
 

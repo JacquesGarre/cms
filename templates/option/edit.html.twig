@@ -1,13 +1,35 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Edit Option{% endblock %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_index') }}">Models</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_form_edit', {'id': attribute.form.id}) }}">Animal</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ path('app_attribute_edit', {'form_id': attribute.form.id, 'id': attribute.id}) }}">Attribute {{ attribute.label.text }}</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Option {{option.text}}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h1>Edit Option</h1>
-
-    {{ include('option/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_attribute_edit', {'id':attribute.id, 'form_id':attribute.form.id} ) }}">back to list</a>
-    
-    {{ include('option/_delete_form.html.twig') }}
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                        <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                            Option {{option.text}}
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ include('option/_form.html.twig', {'button_label': 'Update'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

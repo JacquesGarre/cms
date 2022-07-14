@@ -1,4 +1,6 @@
+{% form_theme form 'twig_forms/fields.html.twig' %}
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <button class="btn btn-success mt-4">{{ button_label|default('Save') }}</button>
+    <a class="btn btn-primary mt-4" href="{{ path('app_menu_item_index') }}">Cancel</a>
 {{ form_end(form) }}

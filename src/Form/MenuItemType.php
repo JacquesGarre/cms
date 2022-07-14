@@ -14,16 +14,29 @@ class MenuItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {   
         $builder
-            ->add('name')
-            ->add('position')
-            ->add('model')
+            ->add('materialIcon', null, [
+                'label' => 'Icon',
+                'attr' => ['class' => 'col-md-4 col-sm-12'],
+            ])
+            ->add('name', null, [
+                'attr' => ['class' => 'col-md-4 col-sm-12'],
+            ])
+            ->add('position', null, [
+                'attr' => ['class' => 'col-md-4 col-sm-12'],
+            ])
+            ->add('model', null, [
+                'attr' => ['class' => 'col-md-4 col-sm-12'],
+            ])
             ->add('route', ChoiceType::class, [
                 'choices' => [
                     "index" => "index",
                     "new" => "new"
-                ]
+                ],
+                'attr' => ['class' => 'col-md-4 col-sm-12']
             ])
-            ->add('view')
+            ->add('view', null, [
+                'attr' => ['class' => 'col-md-4 col-sm-12'],
+            ])
         ;
     }
 

@@ -29,6 +29,7 @@ class MenuItem
     private $route;
 
     #[ORM\ManyToOne(targetEntity: Index::class)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private $view;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

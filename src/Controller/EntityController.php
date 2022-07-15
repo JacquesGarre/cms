@@ -212,7 +212,7 @@ class EntityController extends AbstractController
 
         $fields = $model->getAttributes();
 
-        $colClass = ceil(12 / count($fields));
+        $colClass = floor(12 / count($fields));
 
         foreach($fields as $field){
 
@@ -366,11 +366,13 @@ class EntityController extends AbstractController
                 'name' => $meta->getName(),
                 'form' => $model
             ]);
-            if($attribute && $attribute->getType() == 'select' && (empty($attribute->getSelectEntity()) || $attribute->getSelectEntity() == 'option')){
-                $option = $optionRepository->findOneBy(['id' => $meta->getValue()]);
-                $form->get($meta->getName())->setData($option);
-            } else {
-                $form->get($meta->getName())->setData($meta->getValue());
+            if($form->has($meta->getName())){
+                if($attribute && $attribute->getType() == 'select' && (empty($attribute->getSelectEntity()) || $attribute->getSelectEntity() == 'option')){
+                    $option = $optionRepository->findOneBy(['id' => $meta->getValue()]);
+                    $form->get($meta->getName())->setData($option);
+                } else {
+                    $form->get($meta->getName())->setData($meta->getValue());
+                }
             }
 
         }

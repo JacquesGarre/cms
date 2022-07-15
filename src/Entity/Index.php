@@ -20,22 +20,25 @@ class Index
     private $name;
 
     #[ORM\ManyToOne(targetEntity: Form::class, inversedBy: 'indices')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private $model;
 
     #[ORM\OneToMany(targetEntity: IndexColumn::class, mappedBy: 'view', orphanRemoval: true)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private $indexColumns;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $pagination;
 
     #[ORM\ManyToOne(targetEntity: IndexColumn::class)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private $orderBy;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $orderDirection;
 
     #[ORM\OneToMany(mappedBy: 'view', targetEntity: Relation::class, orphanRemoval: true)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private $relations;
 
     public function __construct()

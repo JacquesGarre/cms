@@ -80,9 +80,11 @@ class AttributeController extends AbstractController
     #[Route('/{form_id}/attributes/{id}/delete', name: 'app_attribute_delete', methods: ['POST'])]
     public function delete(Request $request, Attribute $attribute, AttributeRepository $attributeRepository, FormRepository $formRepository, int $form_id): Response
     {   
+        $session = $request->getSession();
         $model = $formRepository->find($form_id);
         if ($this->isCsrfTokenValid('delete'.$attribute->getId(), $request->request->get('_token'))) {
             $attributeRepository->remove($attribute, true);
+            $session->clear();
         }
 
         return $this->redirectToRoute('app_form_edit', ['id' => $model->getId()], Response::HTTP_SEE_OTHER);

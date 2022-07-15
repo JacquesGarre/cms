@@ -153,7 +153,7 @@ class EntityRepository extends ServiceEntityRepository
         $columns = $view->getIndexColumns();
         $modelFields = $model->getAttributes();
                
-        return "SELECT e.`id`, ".$this->getMetadataColumns($columns, $view)." 
+        return "SELECT ".$this->getMetadataColumns($columns, $view)." 
             FROM `entity` e 
             LEFT JOIN (".$this->getMetadataJoinQuery($modelFields).") em 
             ON e.`id` = em.`entity_id` 
@@ -209,7 +209,7 @@ class EntityRepository extends ServiceEntityRepository
 
     public function getMetadataColumns($columns, $view)
     {   
-        $cols = [];
+        $cols = ["e.`id`"];
         foreach($columns as $column){
             // Basé sur un champ externe
             if($this->isExternalField($column, $view)){

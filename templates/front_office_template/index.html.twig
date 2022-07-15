@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FrontOfficeTemplate index{% endblock %}
+
+{% block body %}
+    <h1>FrontOfficeTemplate index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Css</th>
+                <th>Stylesheets</th>
+                <th>Html</th>
+                <th>Js</th>
+                <th>Scripts</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for front_office_template in front_office_templates %}
+            <tr>
+                <td>{{ front_office_template.id }}</td>
+                <td>{{ front_office_template.name }}</td>
+                <td>{{ front_office_template.css }}</td>
+                <td>{{ front_office_template.stylesheets }}</td>
+                <td>{{ front_office_template.html }}</td>
+                <td>{{ front_office_template.js }}</td>
+                <td>{{ front_office_template.scripts }}</td>
+                <td>
+                    <a href="{{ path('app_front_office_template_show', {'id': front_office_template.id}) }}">show</a>
+                    <a href="{{ path('app_front_office_template_edit', {'id': front_office_template.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_front_office_template_new') }}">Create new</a>
+{% endblock %}

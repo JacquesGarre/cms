@@ -62,67 +62,66 @@
                     <span class="text-secondary text-xs font-weight-normal ps-3">
                     {% if col.field.form.id == view.model.id  %}
 
-                    {% if entity.getEntityMeta(col.field.name) is not empty %}
-                    {% if col.field.type == 'select' and (col.field.selectEntity == 'option' or col.field.selectEntity is empty) %}
+                        {% if entity.getEntityMeta(col.field.name) is not empty %}
+                            {% if col.field.type == 'select' and (col.field.selectEntity == 'option' or col.field.selectEntity is empty) %}
 
-                    {% set value = entity.getEntityMeta(col.field.name).value %}
-                    {{ col.field.options|filter(option => option.id == value)|join(', ') }}
+                                {% set value = entity.getEntityMeta(col.field.name).value %}
+                                {{ col.field.options|filter(option => option.id == value)|join(', ') }}
 
-                    {% elseif col.field.type == 'select' %}
+                            {% elseif col.field.type == 'select' %}
 
-                    {% set modelID = col.field.selectEntity %}
-                    {% set pattern = patterns[modelID] %}
-                    {% set entityID = entity.getEntityMeta(col.field.name).value %}
-                    {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == entityID)|first %}
+                                {% set modelID = col.field.selectEntity %}
+                                {% set pattern = patterns[modelID] %}
+                                {% set entityID = entity.getEntityMeta(col.field.name).value %}
+                                {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == entityID)|first %}
 
-                    {% for field in externalEntity.getEntityMetas() %}
-                    {% set pattern = pattern|replace({ (field.name): field.value }) %}
-                    {% endfor %}
+                                {% if externalEntity is not empty %}
+                                    {% for field in externalEntity.getEntityMetas() %}
+                                        {% set pattern = pattern|replace({ (field.name): field.value }) %}
+                                    {% endfor %}
+                                    {{ pattern }}
+                                {% endif %}
 
-                    {{ pattern }}
+                            {% else %}
 
-                    {% else %}
+                                {{ entity.getEntityMeta(col.field.name).value }}
 
-                    {{ entity.getEntityMeta(col.field.name).value }}
-
-                    {% endif %}
-                    {% endif %}
-
-                    {% else %}
-
-                    {% set modelID = col.field.form.id %}
-                    {% set relationalField = view.model.attributes|filter(attribute => attribute.selectEntity == modelID)|first %}
-
-                    {% if entity.getEntityMeta(relationalField.name) is not empty %}
-
-                    {% set foreignKey = entity.getEntityMeta(relationalField.name).value %}
-                    {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == foreignKey)|first %}
-                    {% set value = externalEntity and externalEntity.getEntityMeta(col.field.name) is not empty ? externalEntity.getEntityMeta(col.field.name).value : '' %}
-
-                    {% if value is not empty %}
-                    {% if col.field.type == 'select' and (col.field.selectEntity == 'option' or col.field.selectEntity is empty) %}
-
-                    {{ col.field.options|filter(option => option.id == value)|join(', ') }}
-
-                    {% elseif col.field.type == 'select' %}
-
-                    {% set modelID = col.field.selectEntity %}
-                    {% set pattern = patterns[modelID] %}
-                    {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == value)|first %}
-
-                    {% for field in externalEntity.getEntityMetas() %}
-                    {% set pattern = pattern|replace({ (field.name): field.value }) %}
-                    {% endfor %}
-
-                    {{ pattern }}
+                            {% endif %}
+                        {% endif %}
 
                     {% else %}
 
-                    {{ value }}
+                        {% set modelID = col.field.form.id %}
+                        {% set relationalField = view.model.attributes|filter(attribute => attribute.selectEntity == modelID)|first %}
 
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
+                        {% if entity.getEntityMeta(relationalField.name) is not empty %}
+
+                            {% set foreignKey = entity.getEntityMeta(relationalField.name).value %}
+                            {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == foreignKey)|first %}
+                            {% set value = externalEntity and externalEntity.getEntityMeta(col.field.name) is not empty ? externalEntity.getEntityMeta(col.field.name).value : '' %}
+
+                            {% if value is not empty %}
+                                {% if col.field.type == 'select' and (col.field.selectEntity == 'option' or col.field.selectEntity is empty) %}
+
+                                    {{ col.field.options|filter(option => option.id == value)|join(', ') }}
+
+                                {% elseif col.field.type == 'select' %}
+
+                                    {% set modelID = col.field.selectEntity %}
+                                    {% set pattern = patterns[modelID] %}
+                                    {% set externalEntity = externalEntities[modelID]|filter(entity => entity.id == value)|first %}
+                                    {% for field in externalEntity.getEntityMetas() %}
+                                        {% set pattern = pattern|replace({ (field.name): field.value }) %}
+                                    {% endfor %}
+                                    {{ pattern }}
+
+                                {% else %}
+
+                                    {{ value }}
+
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
 
                     {% endif %}
                     </span>

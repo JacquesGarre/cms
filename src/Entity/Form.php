@@ -31,7 +31,7 @@ class Form
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $displayPattern;
 
-    #[ORM\OneToMany(mappedBy: 'model', targetEntity: Relation::class)]
+    #[ORM\OneToMany(mappedBy: 'model', targetEntity: Relation::class, orphanRemoval: true)]
     private $relations;
 
     public function __construct()

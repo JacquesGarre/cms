@@ -25,7 +25,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\Repository\RelationRepository;
 
-#[Route('/model')]
+#[Route('/admin/model')]
 class EntityController extends AbstractController
 {
     #[Route('/{id}/view/{view_id}', name: 'app_entity_index', methods: ['GET', 'POST'])]

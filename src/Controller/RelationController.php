@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\FormRepository;
 
-#[Route('/relation/{model_id}')]
+#[Route('/admin/relation/{model_id}')]
 class RelationController extends AbstractController
 {
     #[Route('/', name: 'app_relation_index', methods: ['GET'])]

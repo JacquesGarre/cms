@@ -1,45 +1,76 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}FrontOfficeTemplate index{% endblock %}
+{% block title %}HTML Templates{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Administration</a></li>
+        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">HTML Templates</li>
+    </ol>
+</nav>
+{% endblock %}
 
 {% block body %}
-    <h1>FrontOfficeTemplate index</h1>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-primary shadow-primary border-radius-lg align-items-center">
+                    <h6 class="text-white text-capitalize ps-3  my-0 d-inline-block pt-3  pb-3">
+                        HTML Templates
+                    </h6>
+                    <a class="btn btn-icon float-end text-white mt-2 me-2" href="{{ path('app_front_office_template_new') }}">
+                        <span class="btn-inner--icon"><i class="material-icons">add</i></span>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2 pt-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Id</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for front_office_template in front_office_templates %}
+                            <tr>
+                                <td class="align-middle">
+                                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                                        {{ front_office_template.id }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-secondary text-xs font-weight-normal ps-3">
+                                        {{ front_office_template.name }}
+                                    </span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <a class="text-secondary font-weight-normal text-xs btn w-10 p-0 m-0" data-toggle="tooltip" data-original-title="Edit" href="{{ path('app_front_office_template_show', {'id': front_office_template.id}) }}">
+                                        <i class="material-icons opacity-10">visibility</i>
+                                    </a>
+                                    <a class="text-secondary font-weight-normal text-xs btn w-10 p-0 m-0" data-toggle="tooltip" data-original-title="Edit" href="{{ path('app_front_office_template_edit', {'id': front_office_template.id}) }}">
+                                        <i class="material-icons opacity-10">edit</i>
+                                    </a>
+                                    {{ include('front_office_template/_delete_form.html.twig', {'button_label': 'Delete'}) }}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8">
+                                    {{ include('commons/no_records_found.html.twig') }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Css</th>
-                <th>Stylesheets</th>
-                <th>Html</th>
-                <th>Js</th>
-                <th>Scripts</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for front_office_template in front_office_templates %}
-            <tr>
-                <td>{{ front_office_template.id }}</td>
-                <td>{{ front_office_template.name }}</td>
-                <td>{{ front_office_template.css }}</td>
-                <td>{{ front_office_template.stylesheets }}</td>
-                <td>{{ front_office_template.html }}</td>
-                <td>{{ front_office_template.js }}</td>
-                <td>{{ front_office_template.scripts }}</td>
-                <td>
-                    <a href="{{ path('app_front_office_template_show', {'id': front_office_template.id}) }}">show</a>
-                    <a href="{{ path('app_front_office_template_edit', {'id': front_office_template.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_front_office_template_new') }}">Create new</a>
 {% endblock %}

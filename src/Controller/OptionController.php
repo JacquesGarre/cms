@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AttributeRepository;
 
-#[Route('{attribute_id}/option')]
+#[Route('/admin/{attribute_id}/option')]
 class OptionController extends AbstractController
 {
     #[Route('/', name: 'app_option_index', methods: ['GET'])]

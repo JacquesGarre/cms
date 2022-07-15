@@ -10,9 +10,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/front/office/template')]
+#[Route('/admin/templates')]
 class FrontOfficeTemplateController extends AbstractController
 {
+
+    public function __construct(\Twig\Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
     #[Route('/', name: 'app_front_office_template_index', methods: ['GET'])]
     public function index(FrontOfficeTemplateRepository $frontOfficeTemplateRepository): Response
     {
@@ -43,8 +49,10 @@ class FrontOfficeTemplateController extends AbstractController
     #[Route('/{id}', name: 'app_front_office_template_show', methods: ['GET'])]
     public function show(FrontOfficeTemplate $frontOfficeTemplate): Response
     {
+        $htmlTemplate = $this->twig->createTemplate($frontOfficeTemplate->getHtml());
         return $this->render('front_office_template/show.html.twig', [
             'front_office_template' => $frontOfficeTemplate,
+            'html_template' => $htmlTemplate->render()
         ]);
     }
 

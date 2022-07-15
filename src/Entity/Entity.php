@@ -77,6 +77,13 @@ class Entity
         })->first();
     }
 
+    public function get(string $name): mixed
+    {
+        return $this->getEntityMetas()->filter(function(EntityMeta $entityMeta) use ($name) {
+            return $entityMeta->getName() == $name;
+        })->first()->getValue();
+    }
+
     public function addEntityMeta(EntityMeta $entityMeta): self
     {
         if (!$this->entityMetas->contains($entityMeta)) {

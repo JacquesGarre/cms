@@ -1,46 +1,27 @@
-{% extends 'base.html.twig' %}
+{% extends 'front.html.twig' %}
 
-{% block title %}FrontOfficeTemplate{% endblock %}
+{% block title %}Preview | {{front_office_template.name}}{% endblock %}
 
-{% block body %}
-    <h1>FrontOfficeTemplate</h1>
+{% block stylesheets %}
+    {{front_office_template.stylesheets | raw}}
+{% endblock %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ front_office_template.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ front_office_template.name }}</td>
-            </tr>
-            <tr>
-                <th>Css</th>
-                <td>{{ front_office_template.css }}</td>
-            </tr>
-            <tr>
-                <th>Stylesheets</th>
-                <td>{{ front_office_template.stylesheets }}</td>
-            </tr>
-            <tr>
-                <th>Html</th>
-                <td>{{ front_office_template.html }}</td>
-            </tr>
-            <tr>
-                <th>Js</th>
-                <td>{{ front_office_template.js }}</td>
-            </tr>
-            <tr>
-                <th>Scripts</th>
-                <td>{{ front_office_template.scripts }}</td>
-            </tr>
-        </tbody>
-    </table>
+{% block css %}
+    <style>
+        {{front_office_template.css | raw}}
+    </style>
+{% endblock %}
 
-    <a href="{{ path('app_front_office_template_index') }}">back to list</a>
+{% block html %}
+    {{ include(template_from_string(html_template))  }}
+{% endblock %}
 
-    <a href="{{ path('app_front_office_template_edit', {'id': front_office_template.id}) }}">edit</a>
+{% block scripts %}
+    {{front_office_template.scripts | raw}}
+{% endblock %}
 
-    {{ include('front_office_template/_delete_form.html.twig') }}
+{% block js %}
+    <script>
+        {{front_office_template.js| raw}}
+    </script>
 {% endblock %}

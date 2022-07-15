@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin/label')]
+#[Route('/admin/label', priority: 1)]
 class LabelController extends AbstractController
 {
     #[Route('/', name: 'app_label_index', methods: ['GET'])]

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FrontOfficeTemplateRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FrontOfficeTemplateRepository::class)]
@@ -30,6 +32,14 @@ class FrontOfficeTemplate
 
     #[ORM\Column(type: 'text', nullable: true)]
     private $scripts;
+
+    #[ORM\OneToMany(mappedBy: 'template', targetEntity: FrontOfficePage::class, orphanRemoval: true)]
+    private $frontOfficePages;
+
+    public function __construct()
+    {
+        $this->frontOfficePages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -104,6 +114,36 @@ class FrontOfficeTemplate
     public function setScripts(?string $scripts): self
     {
         $this->scripts = $scripts;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FrontOfficePage>
+     */
+    public function getFrontOfficePages(): Collection
+    {
+        return $this->frontOfficePages;
+    }
+
+    public function addFrontOfficePage(FrontOfficePage $frontOfficePage): self
+    {
+        if (!$this->frontOfficePages->contains($frontOfficePage)) {
+            $this->frontOfficePages[] = $frontOfficePage;
+            $frontOfficePage->setTemplate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFrontOfficePage(FrontOfficePage $frontOfficePage): self
+    {
+        if ($this->frontOfficePages->removeElement($frontOfficePage)) {
+            // set the owning side to null (unless already changed)
+            if ($frontOfficePage->getTemplate() === $this) {
+                $frontOfficePage->setTemplate(null);
+            }
+        }
 
         return $this;
     }

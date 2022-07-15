@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FrontOfficePage index{% endblock %}
+
+{% block body %}
+    <h1>FrontOfficePage index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Uri</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for front_office_page in front_office_pages %}
+            <tr>
+                <td>{{ front_office_page.id }}</td>
+                <td>{{ front_office_page.name }}</td>
+                <td>{{ front_office_page.uri }}</td>
+                <td>
+                    <a href="{{ path('app_front_office_page_show', {'id': front_office_page.id}) }}">show</a>
+                    <a href="{{ path('app_front_office_page_edit', {'id': front_office_page.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_front_office_page_new') }}">Create new</a>
+{% endblock %}

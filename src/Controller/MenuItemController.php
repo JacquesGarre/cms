@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin/menu')]
+#[Route('/admin/menu', priority: 1)]
 class MenuItemController extends AbstractController
 {
     #[Route('/', name: 'app_menu_item_index', methods: ['GET'])]

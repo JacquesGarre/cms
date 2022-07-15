@@ -28,6 +28,14 @@
                     <span class="nav-link-text ms-1">HTML Templates</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" href="{{ path('app_front_office_page_index') }}">
+                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">description</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Pages</span>
+                </a>
+            </li>
             {% if items | length > 0 %}
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-8">Back-office</h6>
@@ -44,13 +52,13 @@
                 {% endfor %}
             {% endif %}
     
-                <li class="nav-item mt-3">
+            <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-8">Front-office</h6>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark " href="{{ path('app_entity_' ~ item.route, {'id':item.model.id, 'view_id': item.view.id}) }}">
+                    <a class="nav-link text-dark" href="{{ path('app_front_office') }}">
                         <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">{{item.materialIcon}}</i>
+                            <i class="material-icons opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Home</span>
                     </a>

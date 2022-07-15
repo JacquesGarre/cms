@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin/models')]
+#[Route('/admin/models', priority: 1)]
 class IndexController extends AbstractController
 {
     #[Route('/{id}/indices', name: 'app_index_index', methods: ['GET'])]

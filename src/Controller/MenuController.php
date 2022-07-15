@@ -12,7 +12,6 @@ class MenuController extends AbstractController
     public function menu(MenuItemRepository $menuItemRepository): Response
     {
         $items = $menuItemRepository->findBy([], ['position' => 'asc']);
-
         return $this->render('menu/index.html.twig', [
             'controller_name' => 'MenuController',
             'items' => $items

@@ -15,7 +15,7 @@ use App\Repository\MenuItemRepository;
 use App\Repository\IndexColumnRepository;
 use App\Repository\RelationRepository;
 
-#[Route('/admin/models')]
+#[Route('/admin/models', priority: 1)]
 class FormController extends AbstractController
 {
     #[Route('/', name: 'app_form_index', methods: ['GET'])]

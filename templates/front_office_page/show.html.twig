@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FrontOfficePage{% endblock %}
+
+{% block body %}
+    <h1>FrontOfficePage</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ front_office_page.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ front_office_page.name }}</td>
+            </tr>
+            <tr>
+                <th>Uri</th>
+                <td>{{ front_office_page.uri }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_front_office_page_index') }}">back to list</a>
+
+    <a href="{{ path('app_front_office_page_edit', {'id': front_office_page.id}) }}">edit</a>
+
+    {{ include('front_office_page/_delete_form.html.twig') }}
+{% endblock %}

@@ -89,8 +89,8 @@ class Entity
 
     public function get(string $name): mixed
     {  
-        $meta = $this->getEntityMeta($name);
-        if($this->getModel()){
+        $meta = $this->getEntityMeta($name);      
+        if(!empty($this->getModel())){
             $attribute = $this->getModel()->getAttribute($name);
             switch($attribute->getType())
             {

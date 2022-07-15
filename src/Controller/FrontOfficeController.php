@@ -34,12 +34,11 @@ class FrontOfficeController extends AbstractController
         $page = $frontOfficePageRepository->findOneBy(['uri' => $uri]);
         $htmlTemplate = $this->twig->createTemplate($page->getTemplate()->getHtml());
 
-        if(!empty($request->get('id')) && !empty($request->get('model'))){
+        if(!empty($request->get('id'))){
             $id = $request->get('id');
-            $entity = $entityRepository->findOneBy(['id' => $id]);
+            $entity = $entityRepository->find($id);
             $tags['entity'] = $entity;
         }
-
 
         return $this->render('front_office_page/show.html.twig', [
             'page' => $page,

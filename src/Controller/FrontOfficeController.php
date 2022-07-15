@@ -36,13 +36,7 @@ class FrontOfficeController extends AbstractController
 
         if(!empty($request->get('id')) && !empty($request->get('model'))){
             $id = $request->get('id');
-            $modelName = $request->get('model');
-
-            $model = $formRepository->findOneBy(['name' => $modelName]);
-            $entity = $entityRepository->findOneBy([
-                'id' => $id,
-                'model' => $model
-            ]);
+            $entity = $entityRepository->findOneBy(['id' => $id]);
             $tags['entity'] = $entity;
         }
 

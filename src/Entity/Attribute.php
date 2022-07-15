@@ -247,6 +247,24 @@ class Attribute
         return $this->options;
     }
 
+    public function getEntityPatternByValue($value)
+    {
+        $modelID = $this->getSelectEntity();
+        $model = $this->formRepository->find($modelID);
+        $entity = $this->entityRepository->findOneBy([
+            'id' => $value,
+            'model' => $model
+        ]);
+        return $entity->getTitle();
+    }
+
+    public function getOptionTextByValue($value)
+    {
+        return $this->getOptions()->filter(function(Option $option) use ($value) {
+            return $option->getId() == $value;
+        })->first()->getText();
+    }
+
     public function addOption(Option $option): self
     {
         if (!$this->options->contains($option)) {

@@ -64,6 +64,15 @@ class Form
         return $this->name;
     }
 
+
+    public function getAttribute($name): Attribute
+    {
+        return $this->getAttributes()->filter(function(Attribute $attribute) use ($name) {
+            return $attribute->getName() == $name;
+        })->first();
+    }
+
+
     /**
      * @return Collection<int, Attribute>
      */

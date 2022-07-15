@@ -77,11 +77,35 @@ class Entity
         })->first();
     }
 
-    public function get(string $name): mixed
+    public function getTitle()
     {
-        return $this->getEntityMetas()->filter(function(EntityMeta $entityMeta) use ($name) {
-            return $entityMeta->getName() == $name;
-        })->first()->getValue();
+        $title = $this->getModel()->getDisplayPattern();
+        foreach($this->getEntityMetas() as $meta)
+        {
+            $title = str_replace($meta->getName(), $meta->getValue(), $title);
+        }
+        return $title;
+    }
+
+    public function get(string $name): mixed
+    {  
+        $meta = $this->getEntityMeta($name);
+        if($this->getModel()){
+            $attribute = $this->getModel()->getAttribute($name);
+            switch($attribute->getType())
+            {
+                case 'select':
+                    if($attribute->getSelectEntity() == 'option' || empty($attribute->getSelectEntity())){
+                        return $attribute->getOptionTextByValue($meta->getValue());
+                    } else {
+                        return $attribute->getEntityPatternByValue($meta->getValue());
+                    }
+                break;
+                default:
+                    return $meta->getValue();
+            }
+        }
+        return $meta->getValue();
     }
 
     public function addEntityMeta(EntityMeta $entityMeta): self

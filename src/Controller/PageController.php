@@ -72,17 +72,6 @@ class PageController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
         return $this->redirectToRoute('app_home');
-    }
-
-
-    #[Route('/admin', name: 'app_admin')]
-    public function adminDashboard(): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-        return $this->render('admin/index.html.twig', [
-
-        ]);
-    }
-    
+    }    
 
 }

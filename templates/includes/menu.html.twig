@@ -1,0 +1,14 @@
+
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <p>Bonjour {{ app.user.email }} !</p>
+{% endif %}
+<ul>    
+    <li><a href="{{ path('app_home') }}">Home</a></li>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <li><a href="{{ path('app_admin') }}">Administration</a></li>
+        {% endif %}
+        <li><a href="">Your projects</a></li>
+        <li><a href="{{ logout_path() }}">Logout</a></li>
+    {% endif %}
+</ul>

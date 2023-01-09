@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <h1>Homepage</h1>
+
+    {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+        <section>
+            <h2>Sign-in</h2>
+            {% if error %}
+                <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            <form action="{{ path('app_home') }}" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <label for="username">Email:</label>
+                <input type="text" id="username" name="_username" value="{{ last_username }}">
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="_password">
+
+                <button type="submit">Log In</button>
+            </form>
+
+        </section>
+        <section>
+            <h2>Sign-up</h2>
+            {{ form_start(registrationForm) }}
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.plainPassword, {
+                    label: 'Password'
+                }) }}
+                {{ form_row(registrationForm.agreeTerms) }}
+
+                <button type="submit" class="btn">Register</button>
+            {{ form_end(registrationForm) }}
+
+        </section>
+    {% endif %}
+
+{% endblock %}

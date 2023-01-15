@@ -1,40 +1,71 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 
-    <h1>Homepage</h1>
-
     {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
-        <section>
-            <h2>Sign-in</h2>
+
+        <div class="container-sm col-md-4 col-sm-12 mt-5">
+
+            <!-- Pills navs -->
+            <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="tab-login" data-mdb-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tab-register" data-mdb-toggle="pill" href="#pills-register" role="tab" aria-controls="pills-register" aria-selected="false">Register</a>
+                </li>
+            </ul>
+            <!-- Pills navs -->
+
+            <!-- Pills content -->
+            <div class="tab-content">
+
+                <!-- LOGIN TAB -->
+                <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
+                    <form action="{{ path('app_home') }}" method="post">
+                        <div class="text-center mb-3">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <div class="form-outline mb-4">
+                                <input type="email" id="username" class="form-control" name="_username" value="{{ last_username }}" />
+                                <label class="form-label" for="username">Email or username</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="password" id="password" class="form-control" name="_password" />
+                                <label class="form-label" for="password">Password</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- REGISTER TAB -->
+                <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
+                    <form name="registration_form" action="{{ path('app_register') }}" method="post">
+                        <div class="form-outline mb-4">
+                            <input type="email" id="registration_form_email" class="form-control" name="registration_form[email]" required="required" maxlength="180" />
+                            <label class="form-label" for="registration_form_email">Email</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="password" id="registration_form_plainPassword" class="form-control" name="registration_form[plainPassword]" required="required" autocomplete="new-password" />
+                            <label class="form-label" for="registration_form_plainPassword">Password</label>
+                        </div>
+                        <div class="form-check d-flex justify-content-center mb-4">
+                            <input class="form-check-input me-2" type="checkbox" value="1" id="registration_form_agreeTerms" name="registration_form[agreeTerms]" required="required"/>
+                            <label class="form-check-label" for="registration_form_agreeTerms">
+                                I have read and agree to the terms
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mb-4">Register</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Pills content -->
             {% if error %}
                 <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
-            <form action="{{ path('app_home') }}" method="post">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                <label for="username">Email:</label>
-                <input type="text" id="username" name="_username" value="{{ last_username }}">
+        </div>
 
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="_password">
-
-                <button type="submit">Log In</button>
-            </form>
-
-        </section>
-        <section>
-            <h2>Sign-up</h2>
-            {{ form_start(registrationForm) }}
-                {{ form_row(registrationForm.email) }}
-                {{ form_row(registrationForm.plainPassword, {
-                    label: 'Password'
-                }) }}
-                {{ form_row(registrationForm.agreeTerms) }}
-
-                <button type="submit" class="btn">Register</button>
-            {{ form_end(registrationForm) }}
-
-        </section>
     {% endif %}
 
 {% endblock %}
+

@@ -18,5 +18,15 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "@popperjs/core": "^2.11.6",
+        "bootstrap": "^5.2.3",
+        "chart.js": "^4.1.2",
+        "jquery": "^3.6.3",
+        "mdb-ui-kit": "^6.1.0",
+        "mdbootstrap": "^4.20.0",
+        "node-sass": "^8.0.0",
+        "sass-loader": "^13.2.0"
     }
 }

@@ -7,6 +7,16 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
+import './styles/global.scss';
 
 // start the Stimulus application
 import './bootstrap';
+
+const $ = require('jquery');
+//const boostrap = require('bootstrap');
+import * as mdb from 'mdb-ui-kit'; // lib
+
+var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new bootstrap.Popover(popoverTriggerEl);
+});

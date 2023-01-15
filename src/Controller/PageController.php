@@ -69,7 +69,7 @@ class PageController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             $security->login($user);
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_project_index');
         }
         return $this->redirectToRoute('app_home');
     }    
